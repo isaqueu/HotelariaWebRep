@@ -14,12 +14,9 @@ import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
 import { queryClient } from '@/lib/queryClient';
 import { dispositivoApi } from '../services/api';
-import { mockDataService } from '../services/mockService';
-import { useMock } from '../contexts/MockContext';
 import type { Dispositivo } from '../types';
 
 export function DispositivoPage() {
-  const { useMock: mockMode } = useMock();
   const { toast } = useToast();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Dispositivo | null>(null);
@@ -39,13 +36,13 @@ export function DispositivoPage() {
   // Queries
   const { data: dispositivos = [], isLoading } = useQuery({
     queryKey: ['/api/dispositivo'],
-    queryFn: () => mockMode ? mockDataService.getDispositivos() : dispositivoApi.getAll(),
+    queryFn: () => dispositivoApi.getAll(),
   });
 
   // Mutations
   const createMutation = useMutation({
     mutationFn: (data: Omit<Dispositivo, 'cd_dispositivo'>) =>
-      mockMode ? mockDataService.createDispositivo(data) : dispositivoApi.create(data),
+      dispositivoApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/dispositivo'] });
       toast({ title: 'Dispositivo criado com sucesso!' });
@@ -59,7 +56,7 @@ export function DispositivoPage() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<Dispositivo> }) =>
-      mockMode ? mockDataService.updateDispositivo(id, data) : dispositivoApi.update(id, data),
+      dispositivoApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/dispositivo'] });
       toast({ title: 'Dispositivo atualizado com sucesso!' });
@@ -73,7 +70,7 @@ export function DispositivoPage() {
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) =>
-      mockMode ? mockDataService.deleteDispositivo(id) : dispositivoApi.delete(id),
+      dispositivoApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/dispositivo'] });
       toast({ title: 'Dispositivo excluído com sucesso!' });
@@ -121,7 +118,7 @@ export function DispositivoPage() {
           <h1 className="text-3xl font-medium text-gray-800 mb-2">Dispositivos</h1>
           <p className="text-gray-600">Gerencie os dispositivos móveis do sistema</p>
         </div>
-        
+
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
             <MaterialButton onClick={openCreateModal} className="flex items-center">
@@ -129,14 +126,14 @@ export function DispositivoPage() {
               Novo Dispositivo
             </MaterialButton>
           </DialogTrigger>
-          
+
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>
                 {editingItem ? 'Editar Dispositivo' : 'Novo Dispositivo'}
               </DialogTitle>
             </DialogHeader>
-            
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -315,7 +312,7 @@ export function DispositivoPage() {
                   {dispositivo.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
                 </Badge>
               </div>
-              
+
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-500">Serial:</span>

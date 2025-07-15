@@ -13,12 +13,9 @@ import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
 import { queryClient } from '@/lib/queryClient';
 import { tipoLimpezaApi } from '../services/api';
-import { mockDataService } from '../services/mockService';
-import { useMock } from '../contexts/MockContext';
 import type { TipoLimpeza } from '../types';
 
 export function TipoLimpezaPage() {
-  const { useMock: mockMode } = useMock();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -35,13 +32,13 @@ export function TipoLimpezaPage() {
   // Queries
   const { data: tiposLimpeza = [], isLoading } = useQuery({
     queryKey: ['/api/tipo-limpeza'],
-    queryFn: () => mockMode ? mockDataService.getTiposLimpeza() : tipoLimpezaApi.getAll(),
+    queryFn: () => tipoLimpezaApi.getAll(),
   });
 
   // Mutations
   const createMutation = useMutation({
     mutationFn: (data: Omit<TipoLimpeza, 'cd_tipo_limpeza'>) =>
-      mockMode ? mockDataService.createTipoLimpeza(data) : tipoLimpezaApi.create(data),
+      tipoLimpezaApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/tipo-limpeza'] });
       toast({ title: 'Tipo de limpeza criado com sucesso!' });
@@ -55,7 +52,7 @@ export function TipoLimpezaPage() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<TipoLimpeza> }) =>
-      mockMode ? mockDataService.updateTipoLimpeza(id, data) : tipoLimpezaApi.update(id, data),
+      tipoLimpezaApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/tipo-limpeza'] });
       toast({ title: 'Tipo de limpeza atualizado com sucesso!' });
@@ -69,7 +66,7 @@ export function TipoLimpezaPage() {
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) =>
-      mockMode ? mockDataService.deleteTipoLimpeza(id) : tipoLimpezaApi.delete(id),
+      tipoLimpezaApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/tipo-limpeza'] });
       toast({ title: 'Tipo de limpeza excluído com sucesso!' });

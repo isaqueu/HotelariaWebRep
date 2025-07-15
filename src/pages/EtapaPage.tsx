@@ -10,17 +10,13 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
 import { queryClient } from '@/lib/queryClient';
 import { etapaApi, categoriaChamadoApi, tipoOperadorApi } from '../services/api';
-import { mockDataService } from '../services/mockService';
-import { useMock } from '../contexts/MockContext';
 import type { Etapa } from '../types';
 
 export function EtapaPage() {
-  const { useMock: mockMode } = useMock();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -40,23 +36,23 @@ export function EtapaPage() {
   // Queries
   const { data: etapas = [], isLoading } = useQuery({
     queryKey: ['/api/etapa'],
-    queryFn: () => mockMode ? mockDataService.getEtapas() : etapaApi.getAll(),
+    queryFn: () => etapaApi.getAll(),
   });
 
   const { data: categorias = [] } = useQuery({
     queryKey: ['/api/categoria-chamado'],
-    queryFn: () => mockMode ? mockDataService.getCategoriasChamado() : categoriaChamadoApi.getAll(),
+    queryFn: () => categoriaChamadoApi.getAll(),
   });
 
   const { data: tiposOperador = [] } = useQuery({
     queryKey: ['/api/tipo-operador'],
-    queryFn: () => mockMode ? mockDataService.getTiposOperador() : tipoOperadorApi.getAll(),
+    queryFn: () => tipoOperadorApi.getAll(),
   });
 
   // Mutations
   const createMutation = useMutation({
     mutationFn: (data: Omit<Etapa, 'cd_etapa'>) =>
-      mockMode ? mockDataService.createEtapa(data) : etapaApi.create(data),
+      etapaApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/etapa'] });
       toast({ title: 'Etapa criada com sucesso!' });
@@ -70,7 +66,7 @@ export function EtapaPage() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<Etapa> }) =>
-      mockMode ? mockDataService.updateEtapa(id, data) : etapaApi.update(id, data),
+      etapaApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/etapa'] });
       toast({ title: 'Etapa atualizada com sucesso!' });
@@ -84,7 +80,7 @@ export function EtapaPage() {
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) =>
-      mockMode ? mockDataService.deleteEtapa(id) : etapaApi.delete(id),
+      etapaApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/etapa'] });
       toast({ title: 'Etapa excluída com sucesso!' });
@@ -137,7 +133,7 @@ export function EtapaPage() {
           <h1 className="text-3xl font-medium text-gray-800 mb-2">Etapas</h1>
           <p className="text-gray-600">Gerencie as etapas do fluxo de serviços</p>
         </div>
-        
+
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
             <MaterialButton onClick={openCreateModal} className="flex items-center">
@@ -145,14 +141,14 @@ export function EtapaPage() {
               Nova Etapa
             </MaterialButton>
           </DialogTrigger>
-          
+
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>
                 {editingItem ? 'Editar Etapa' : 'Nova Etapa'}
               </DialogTitle>
             </DialogHeader>
-            
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

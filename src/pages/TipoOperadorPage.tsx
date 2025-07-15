@@ -10,12 +10,9 @@ import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
 import { queryClient } from '@/lib/queryClient';
 import { tipoOperadorApi } from '../services/api';
-import { mockDataService } from '../services/mockService';
-import { useMock } from '../contexts/MockContext';
 import type { TipoOperador } from '../types';
 
 export function TipoOperadorPage() {
-  const { useMock: mockMode } = useMock();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -30,13 +27,13 @@ export function TipoOperadorPage() {
   // Queries
   const { data: tiposOperador = [], isLoading } = useQuery({
     queryKey: ['/api/tipo-operador'],
-    queryFn: () => mockMode ? mockDataService.getTiposOperador() : tipoOperadorApi.getAll(),
+    queryFn: () => tipoOperadorApi.getAll(),
   });
 
   // Mutations
   const createMutation = useMutation({
     mutationFn: (data: Omit<TipoOperador, 'cd_tipo_operador'>) =>
-      mockMode ? mockDataService.createTipoOperador(data) : tipoOperadorApi.create(data),
+      tipoOperadorApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/tipo-operador'] });
       toast({ title: 'Tipo de operador criado com sucesso!' });
@@ -50,7 +47,7 @@ export function TipoOperadorPage() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<TipoOperador> }) =>
-      mockMode ? mockDataService.updateTipoOperador(id, data) : tipoOperadorApi.update(id, data),
+      tipoOperadorApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/tipo-operador'] });
       toast({ title: 'Tipo de operador atualizado com sucesso!' });
@@ -64,7 +61,7 @@ export function TipoOperadorPage() {
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) =>
-      mockMode ? mockDataService.deleteTipoOperador(id) : tipoOperadorApi.delete(id),
+      tipoOperadorApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/tipo-operador'] });
       toast({ title: 'Tipo de operador excluído com sucesso!' });

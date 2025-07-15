@@ -10,12 +10,9 @@ import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
 import { queryClient } from '@/lib/queryClient';
 import { tipoAcessoApi } from '../services/api';
-import { mockDataService } from '../services/mockService';
-import { useMock } from '../contexts/MockContext';
 import type { TipoAcesso } from '../types';
 
 export function TipoAcessoPage() {
-  const { useMock: mockMode } = useMock();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -30,13 +27,13 @@ export function TipoAcessoPage() {
   // Queries
   const { data: tiposAcesso = [], isLoading } = useQuery({
     queryKey: ['/api/tipo-acesso'],
-    queryFn: () => mockMode ? mockDataService.getTiposAcesso() : tipoAcessoApi.getAll(),
+    queryFn: () => tipoAcessoApi.getAll(),
   });
 
   // Mutations
   const createMutation = useMutation({
     mutationFn: (data: Omit<TipoAcesso, 'cd_tipo_acesso'>) =>
-      mockMode ? mockDataService.createTipoAcesso(data) : tipoAcessoApi.create(data),
+      tipoAcessoApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/tipo-acesso'] });
       toast({ title: 'Tipo de acesso criado com sucesso!' });
@@ -50,7 +47,7 @@ export function TipoAcessoPage() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<TipoAcesso> }) =>
-      mockMode ? mockDataService.updateTipoAcesso(id, data) : tipoAcessoApi.update(id, data),
+      tipoAcessoApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/tipo-acesso'] });
       toast({ title: 'Tipo de acesso atualizado com sucesso!' });
@@ -64,7 +61,7 @@ export function TipoAcessoPage() {
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) =>
-      mockMode ? mockDataService.deleteTipoAcesso(id) : tipoAcessoApi.delete(id),
+      tipoAcessoApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/tipo-acesso'] });
       toast({ title: 'Tipo de acesso excluído com sucesso!' });

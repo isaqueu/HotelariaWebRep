@@ -13,12 +13,9 @@ import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
 import { queryClient } from '@/lib/queryClient';
 import { itemLocalApi } from '../services/api';
-import { mockDataService } from '../services/mockService';
-import { useMock } from '../contexts/MockContext';
 import type { ItemLocal } from '../types';
 
 export function ItemLocalPage() {
-  const { useMock: mockMode } = useMock();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -32,15 +29,15 @@ export function ItemLocalPage() {
   });
 
   // Queries
-  const { data: locais = [], isLoading } = useQuery({
+  const { data: itensLocal = [], isLoading } = useQuery({
     queryKey: ['/api/item-local'],
-    queryFn: () => mockMode ? mockDataService.getItensLocal() : itemLocalApi.getAll(),
+    queryFn: () => itemLocalApi.getAll(),
   });
 
   // Mutations
   const createMutation = useMutation({
     mutationFn: (data: Omit<ItemLocal, 'cd_item_local'>) =>
-      mockMode ? mockDataService.createItemLocal(data) : itemLocalApi.create(data),
+      itemLocalApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/item-local'] });
       toast({ title: 'Local criado com sucesso!' });
@@ -54,7 +51,7 @@ export function ItemLocalPage() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<ItemLocal> }) =>
-      mockMode ? mockDataService.updateItemLocal(id, data) : itemLocalApi.update(id, data),
+      itemLocalApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/item-local'] });
       toast({ title: 'Local atualizado com sucesso!' });
@@ -68,7 +65,7 @@ export function ItemLocalPage() {
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) =>
-      mockMode ? mockDataService.deleteItemLocal(id) : itemLocalApi.delete(id),
+      itemLocalApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/item-local'] });
       toast({ title: 'Local excluído com sucesso!' });
@@ -79,7 +76,7 @@ export function ItemLocalPage() {
   });
 
   // Filtered data
-  const filteredLocais = locais.filter(local =>
+  const filteredLocais = itensLocal.filter(local =>
     local.ds_item_local.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -121,7 +118,7 @@ export function ItemLocalPage() {
           <h1 className="text-3xl font-medium text-gray-800 mb-2">Locais de Item</h1>
           <p className="text-gray-600">Gerencie os locais onde os itens podem ser colocados</p>
         </div>
-        
+
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
             <MaterialButton onClick={openCreateModal} className="flex items-center">
@@ -129,14 +126,14 @@ export function ItemLocalPage() {
               Novo Local
             </MaterialButton>
           </DialogTrigger>
-          
+
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
                 {editingItem ? 'Editar Local' : 'Novo Local'}
               </DialogTitle>
             </DialogHeader>
-            
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                 <FormField

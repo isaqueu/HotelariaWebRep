@@ -14,12 +14,9 @@ import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
 import { queryClient } from '@/lib/queryClient';
 import { statusErroQrcodeApi, categoriaChamadoApi } from '../services/api';
-import { mockDataService } from '../services/mockService';
-import { useMock } from '../contexts/MockContext';
 import type { StatusErroQrcode } from '../types';
 
 export function StatusErroQrcodePage() {
-  const { useMock: mockMode } = useMock();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -36,18 +33,18 @@ export function StatusErroQrcodePage() {
   // Queries
   const { data: statusErros = [], isLoading } = useQuery({
     queryKey: ['/api/status-erro-qrcode'],
-    queryFn: () => mockMode ? mockDataService.getStatusErroQrcode() : statusErroQrcodeApi.getAll(),
+    queryFn: () => statusErroQrcodeApi.getAll(),
   });
 
   const { data: categorias = [] } = useQuery({
     queryKey: ['/api/categoria-chamado'],
-    queryFn: () => mockMode ? mockDataService.getCategoriasChamado() : categoriaChamadoApi.getAll(),
+    queryFn: () => categoriaChamadoApi.getAll(),
   });
 
   // Mutations
   const createMutation = useMutation({
     mutationFn: (data: Omit<StatusErroQrcode, 'cd_status_erro_qrcode'>) =>
-      mockMode ? mockDataService.createStatusErroQrcode(data) : statusErroQrcodeApi.create(data),
+      statusErroQrcodeApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/status-erro-qrcode'] });
       toast({ title: 'Status de erro QRCode criado com sucesso!' });
@@ -61,7 +58,7 @@ export function StatusErroQrcodePage() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<StatusErroQrcode> }) =>
-      mockMode ? mockDataService.updateStatusErroQrcode(id, data) : statusErroQrcodeApi.update(id, data),
+      statusErroQrcodeApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/status-erro-qrcode'] });
       toast({ title: 'Status de erro QRCode atualizado com sucesso!' });
@@ -75,7 +72,7 @@ export function StatusErroQrcodePage() {
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) =>
-      mockMode ? mockDataService.deleteStatusErroQrcode(id) : statusErroQrcodeApi.delete(id),
+      statusErroQrcodeApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/status-erro-qrcode'] });
       toast({ title: 'Status de erro QRCode excluído com sucesso!' });

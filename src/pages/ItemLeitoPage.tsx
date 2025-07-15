@@ -14,12 +14,9 @@ import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
 import { queryClient } from '@/lib/queryClient';
 import { itemLeitoApi, itemLocalApi } from '../services/api';
-import { mockDataService } from '../services/mockService';
-import { useMock } from '../contexts/MockContext';
 import type { ItemLeito } from '../types';
 
 export function ItemLeitoPage() {
-  const { useMock: mockMode } = useMock();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -38,18 +35,18 @@ export function ItemLeitoPage() {
   // Queries
   const { data: itensLeito = [], isLoading } = useQuery({
     queryKey: ['/api/item-leito'],
-    queryFn: () => mockMode ? mockDataService.getItensLeito() : itemLeitoApi.getAll(),
+    queryFn: () => itemLeitoApi.getAll(),
   });
 
   const { data: locais = [] } = useQuery({
     queryKey: ['/api/item-local'],
-    queryFn: () => mockMode ? mockDataService.getItensLocal() : itemLocalApi.getAll(),
+    queryFn: () => itemLocalApi.getAll(),
   });
 
   // Mutations
   const createMutation = useMutation({
     mutationFn: (data: Omit<ItemLeito, 'cd_item_leito'>) =>
-      mockMode ? mockDataService.createItemLeito(data) : itemLeitoApi.create(data),
+      itemLeitoApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/item-leito'] });
       toast({ title: 'Item do leito criado com sucesso!' });
@@ -63,7 +60,7 @@ export function ItemLeitoPage() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<ItemLeito> }) =>
-      mockMode ? mockDataService.updateItemLeito(id, data) : itemLeitoApi.update(id, data),
+      itemLeitoApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/item-leito'] });
       toast({ title: 'Item do leito atualizado com sucesso!' });
@@ -77,7 +74,7 @@ export function ItemLeitoPage() {
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) =>
-      mockMode ? mockDataService.deleteItemLeito(id) : itemLeitoApi.delete(id),
+      itemLeitoApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/item-leito'] });
       toast({ title: 'Item do leito excluído com sucesso!' });

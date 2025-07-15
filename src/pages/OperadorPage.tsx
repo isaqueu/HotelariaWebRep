@@ -13,12 +13,9 @@ import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
 import { queryClient } from '@/lib/queryClient';
 import { operadorApi } from '../services/api';
-import { mockDataService } from '../services/mockService';
-import { useMock } from '../contexts/MockContext';
 import type { Operador } from '../types';
 
 export function OperadorPage() {
-  const { useMock: mockMode } = useMock();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -37,13 +34,13 @@ export function OperadorPage() {
   // Queries
   const { data: operadores = [], isLoading } = useQuery({
     queryKey: ['/api/operador'],
-    queryFn: () => mockMode ? mockDataService.getOperadores() : operadorApi.getAll(),
+    queryFn: () => operadorApi.getAll(),
   });
 
   // Mutations
   const createMutation = useMutation({
     mutationFn: (data: Omit<Operador, 'cd_operador'>) =>
-      mockMode ? mockDataService.createOperador(data) : operadorApi.create(data),
+      operadorApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/operador'] });
       toast({ title: 'Operador criado com sucesso!' });
@@ -57,7 +54,7 @@ export function OperadorPage() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<Operador> }) =>
-      mockMode ? mockDataService.updateOperador(id, data) : operadorApi.update(id, data),
+      operadorApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/operador'] });
       toast({ title: 'Operador atualizado com sucesso!' });
@@ -71,7 +68,7 @@ export function OperadorPage() {
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) =>
-      mockMode ? mockDataService.deleteOperador(id) : operadorApi.delete(id),
+      operadorApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/operador'] });
       toast({ title: 'Operador excluído com sucesso!' });

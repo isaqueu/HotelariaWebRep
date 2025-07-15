@@ -14,12 +14,9 @@ import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
 import { queryClient } from '@/lib/queryClient';
 import { categoriaChamadoApi } from '../services/api';
-import { mockDataService } from '../services/mockService';
-import { useMock } from '../contexts/MockContext';
 import type { CategoriaChamado } from '../types';
 
 export function CategoriaChamadoPage() {
-  const { useMock: mockMode } = useMock();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
@@ -36,13 +33,13 @@ export function CategoriaChamadoPage() {
   // Queries
   const { data: categorias = [], isLoading } = useQuery({
     queryKey: ['/api/categoria-chamado'],
-    queryFn: () => mockMode ? mockDataService.getCategoriasChamado() : categoriaChamadoApi.getAll(),
+    queryFn: () => categoriaChamadoApi.getAll(),
   });
 
   // Mutations
   const createMutation = useMutation({
     mutationFn: (data: Omit<CategoriaChamado, 'cd_categoria_chamado'>) =>
-      mockMode ? mockDataService.createCategoriaChamado(data) : categoriaChamadoApi.create(data),
+      categoriaChamadoApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/categoria-chamado'] });
       toast({ title: 'Categoria criada com sucesso!' });
@@ -56,7 +53,7 @@ export function CategoriaChamadoPage() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<CategoriaChamado> }) =>
-      mockMode ? mockDataService.updateCategoriaChamado(id, data) : categoriaChamadoApi.update(id, data),
+      categoriaChamadoApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/categoria-chamado'] });
       toast({ title: 'Categoria atualizada com sucesso!' });
@@ -70,7 +67,7 @@ export function CategoriaChamadoPage() {
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) =>
-      mockMode ? mockDataService.deleteCategoriaChamado(id) : categoriaChamadoApi.delete(id),
+      categoriaChamadoApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/categoria-chamado'] });
       toast({ title: 'Categoria excluída com sucesso!' });
@@ -128,7 +125,7 @@ export function CategoriaChamadoPage() {
           <h1 className="text-3xl font-medium text-gray-800 mb-2">Categoria de Chamados</h1>
           <p className="text-gray-600">Gerencie as categorias de chamados do sistema</p>
         </div>
-        
+
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
             <MaterialButton onClick={openCreateModal} className="flex items-center">
@@ -136,14 +133,14 @@ export function CategoriaChamadoPage() {
               Nova Categoria
             </MaterialButton>
           </DialogTrigger>
-          
+
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
                 {editingItem ? 'Editar Categoria' : 'Nova Categoria'}
               </DialogTitle>
             </DialogHeader>
-            
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                 <FormField
