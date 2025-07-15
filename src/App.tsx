@@ -1,4 +1,5 @@
-import { Switch, Route, Redirect } from "wouter";
+
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -24,7 +25,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
   
   if (!isAuthenticated) {
-    return <Redirect to="/login" />;
+    return <Navigate to="/login" replace />;
   }
   
   return <DashboardLayout>{children}</DashboardLayout>;
@@ -34,93 +35,91 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
   
   if (isAuthenticated) {
-    return <Redirect to="/dashboard" />;
+    return <Navigate to="/dashboard" replace />;
   }
   
   return <>{children}</>;
 }
 
-function Router() {
+function AppRoutes() {
   return (
-    <Switch>
-      <Route path="/login">
+    <Routes>
+      <Route path="/login" element={
         <PublicRoute>
           <LoginPage />
         </PublicRoute>
-      </Route>
+      } />
       
-      <Route path="/dashboard">
+      <Route path="/dashboard" element={
         <ProtectedRoute>
           <DashboardPage />
         </ProtectedRoute>
-      </Route>
+      } />
       
-      <Route path="/categoria-chamado">
+      <Route path="/categoria-chamado" element={
         <ProtectedRoute>
           <CategoriaChamadoPage />
         </ProtectedRoute>
-      </Route>
+      } />
       
-      <Route path="/dispositivos">
+      <Route path="/dispositivos" element={
         <ProtectedRoute>
           <DispositivoPage />
         </ProtectedRoute>
-      </Route>
+      } />
       
-      <Route path="/etapas">
+      <Route path="/etapas" element={
         <ProtectedRoute>
           <EtapaPage />
         </ProtectedRoute>
-      </Route>
+      } />
       
-      <Route path="/item-leito">
+      <Route path="/item-leito" element={
         <ProtectedRoute>
           <ItemLeitoPage />
         </ProtectedRoute>
-      </Route>
+      } />
       
-      <Route path="/item-local">
+      <Route path="/item-local" element={
         <ProtectedRoute>
           <ItemLocalPage />
         </ProtectedRoute>
-      </Route>
+      } />
       
-      <Route path="/tipo-limpeza">
+      <Route path="/tipo-limpeza" element={
         <ProtectedRoute>
           <TipoLimpezaPage />
         </ProtectedRoute>
-      </Route>
+      } />
       
-      <Route path="/tipo-operador">
+      <Route path="/tipo-operador" element={
         <ProtectedRoute>
           <TipoOperadorPage />
         </ProtectedRoute>
-      </Route>
+      } />
       
-      <Route path="/tipo-acesso">
+      <Route path="/tipo-acesso" element={
         <ProtectedRoute>
           <TipoAcessoPage />
         </ProtectedRoute>
-      </Route>
+      } />
       
-      <Route path="/status-erro-qrcode">
+      <Route path="/status-erro-qrcode" element={
         <ProtectedRoute>
           <StatusErroQrcodePage />
         </ProtectedRoute>
-      </Route>
+      } />
       
-      <Route path="/operadores">
+      <Route path="/operadores" element={
         <ProtectedRoute>
           <OperadorPage />
         </ProtectedRoute>
-      </Route>
+      } />
       
-      <Route path="/">
-        <Redirect to="/login" />
-      </Route>
+      <Route path="/" element={<Navigate to="/login" replace />} />
       
-      <Route component={NotFound} />
-    </Switch>
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 
@@ -130,8 +129,10 @@ function App() {
       <TooltipProvider>
         <MockProvider>
           <AuthProvider>
-            <Toaster />
-            <Router />
+            <Router>
+              <Toaster />
+              <AppRoutes />
+            </Router>
           </AuthProvider>
         </MockProvider>
       </TooltipProvider>

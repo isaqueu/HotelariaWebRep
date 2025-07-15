@@ -1,7 +1,7 @@
 import { FileSliders, Smartphone, Users, History } from 'lucide-react';
 import { MaterialCard } from '../components/ui/material-card';
 import { MaterialButton } from '../components/ui/material-button';
-import { Link } from 'wouter';
+import { Link } from 'react-router-dom';
 
 const statsCards = [
   {

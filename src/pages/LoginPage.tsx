@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocation } from 'wouter';
+import { useNavigate } from 'react-router-dom';
 import { Hospital, User, Lock } from 'lucide-react';
 import { FloatingLabelInput } from '../components/ui/floating-label-input';
 import { MaterialButton } from '../components/ui/material-button';
@@ -8,7 +8,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
 export function LoginPage() {
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   const { login } = useAuth();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
@@ -29,7 +29,7 @@ export function LoginPage() {
           title: 'Login realizado com sucesso',
           description: 'Bem-vindo ao HOTELARIA WEB',
         });
-        setLocation('/dashboard');
+        navigate('/dashboard');
       } else {
         toast({
           title: 'Erro no login',
