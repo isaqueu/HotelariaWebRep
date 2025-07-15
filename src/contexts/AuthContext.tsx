@@ -1,12 +1,15 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { UserProfile } from '../types';
-import { mockAuthService } from '../services/mockService';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { authService } from '../services/authService';
+import { getAuthToken, saveAuthToken, removeAuthToken } from '../lib/utils';
+import type { UserProfile } from '../types';
 
 interface AuthContextType {
-  user: UserProfile | null;
+  isAuthenticated: boolean;
+  userProfile: UserProfile | null;
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
-  isAuthenticated: boolean;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -15,55 +18,76 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+export function AuthProvider({ children }: AuthProviderProps) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [token, setToken] = useState<string | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
 
+  // Inicializa o contexto verificando se há token salvo
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-      setIsAuthenticated(true);
-    }
+    const initializeAuth = async () => {
+      try {
+        const savedToken = getAuthToken();
+        if (savedToken) {
+          setToken(savedToken);
+
+          // Verifica se o token ainda é válido fazendo uma requisição para o perfil
+          const profile = await authService.getProfile();
+          setUserProfile(profile);
+        }
+      } catch (error) {
+        console.error('Erro ao inicializar autenticação:', error);
+        // Remove token inválido
+        removeAuthToken();
+        setToken(null);
+        setUserProfile(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
   }, []);
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
+      const response = await authService.login({ username, password });
 
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
-        setIsAuthenticated(true);
-        localStorage.setItem('user', JSON.stringify(userData));
+      if (response.token) {
+        saveAuthToken(response.token);
+        setToken(response.token);
+
+        // Busca o perfil do usuário após login
+        const profile = await authService.getProfile();
+        setUserProfile(profile);
         return true;
       }
       return false;
-    } catch {
+    } catch (error) {
+      console.error('Erro no login:', error);
       return false;
     }
   };
 
   const logout = () => {
-    setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('user');
-    fetch('/api/auth/logout', {
-      method: 'POST',
-      credentials: 'include',
-    }).catch(() => {
-      // Handle error silently
-    });
+    removeAuthToken();
+    setToken(null);
+    setUserProfile(null);
+    navigate('/login');
+  };
+
+  const value = {
+    isAuthenticated: !!token,
+    userProfile,
+    login,
+    logout,
+    loading,
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
