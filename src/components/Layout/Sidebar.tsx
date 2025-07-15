@@ -147,7 +147,7 @@ const menuStructure: MenuGroup[] = [
  * - Ícones: diferentes cores baseadas no estado ativo
  */
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
-  const [location] = useLocation();
+  const location = useLocation();
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   const sidebarRef = useRef<HTMLDivElement>(null);
 
@@ -186,8 +186,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
    * - Mantém a hierarquia visível até o item ativo
    */
   useEffect(() => {
-    if (location && location !== "/dashboard") {
-      const pathInfo = findGroupAndItemForPath(location);
+    if (location.pathname && location.pathname !== "/dashboard") {
+      const pathInfo = findGroupAndItemForPath(location.pathname);
       if (pathInfo) {
         const groupsToExpand = new Set<string>();
         groupsToExpand.add(pathInfo.groupName);
@@ -203,7 +203,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       // Se for dashboard, fecha todos os grupos
       setExpandedGroups(new Set());
     }
-  }, [location]);
+  }, [location.pathname]);
 
   const toggleGroup = (groupName: string) => {
     setExpandedGroups((prev) => {
@@ -244,7 +244,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   /**
    * FUNÇÕES DE VERIFICAÇÃO DE ESTADO ATIVO
    */
-  const isItemActive = (path: string) => location === path;
+  const isItemActive = (path: string) => location.pathname === path;
 
   /**
    * Verifica se algum item do grupo está ativo
@@ -253,7 +253,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
    */
   const isGroupActive = (items: MenuItem[]): boolean => {
     return items.some((item) => {
-      if (item.path && location === item.path) return true;
+      if (item.path && location.pathname === item.path) return true;
       if (item.children) return isGroupActive(item.children);
       return false;
     });
@@ -270,19 +270,19 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     itemName?: string,
     subItemName?: string,
   ): boolean => {
-    if (location === "/dashboard" && groupName === "Dashboard") return true;
+    if (location.pathname === "/dashboard" && groupName === "Dashboard") return true;
 
     for (const group of menuStructure) {
       if (group.name === "Cadastro") {
         for (const item of group.items) {
-          if (item.path && location === item.path) {
+          if (item.path && location.pathname === item.path) {
             if (groupName === "Cadastro" && !itemName) return true;
             if (groupName === "Cadastro" && itemName === item.name) return true;
             return false;
           }
           if (item.children) {
             for (const child of item.children) {
-              if (child.path && location === child.path) {
+              if (child.path && location.pathname === child.path) {
                 if (groupName === "Cadastro" && !itemName) return true;
                 if (
                   groupName === "Cadastro" &&
@@ -359,18 +359,18 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               const isInHierarchy = isInActiveHierarchy(group.name);
               // REGRA CRÍTICA: hasActiveChild verifica se alguma página filha está REALMENTE ativa
               const hasActiveChild = group.items.some((item) => {
-                if (item.path && location === item.path) return true;
+                if (item.path && location.pathname === item.path) return true;
                 if (item.children) {
-                  return item.children.some((child) => child.path === location);
+                  return item.children.some((child) => child.path === location.pathname);
                 }
                 return false;
               });
 
               // Dashboard é tratado como item individual
               if (group.items.length === 0) {
-                const isActive = location === "/dashboard";
+                const isActive = location.pathname === "/dashboard";
                 return (
-                  <Link key={group.name} href="/dashboard">
+                  <Link key={group.name} to="/dashboard">
                     <div
                       className={cn(
                         "flex items-center px-4 py-3 rounded-xl transition-all duration-300 group cursor-pointer",
@@ -456,7 +456,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                       if (item.children) {
                         const hasActiveChild =
                           item.children?.some(
-                            (child) => child.path === location,
+                            (child) => child.path === location.pathname,
                           ) || false;
                         const isItemExpanded = expandedGroups.has(
                           `${group.name}-${item.name}`,
@@ -520,7 +520,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                                   );
 
                                 return (
-                                  <Link key={subItem.path} href={subItem.path!}>
+                                  <Link key={subItem.path} to={subItem.path!}>
                                     <div
                                       className={cn(
                                         "flex items-center px-3 py-2 rounded-lg transition-all duration-300 group relative cursor-pointer",
@@ -563,7 +563,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                       const isActive = isItemActive(item.path!);
 
                       return (
-                        <Link key={item.path} href={item.path!}>
+                        <Link key={item.path} to={item.path!}>
                           <div
                             className={cn(
                               "flex items-center px-3 py-2 rounded-lg transition-all duration-300 group relative cursor-pointer",
