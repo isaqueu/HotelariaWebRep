@@ -1,0 +1,163 @@
+Sidebar.tsx:150 Uncaught TypeError: useLocation is not a function or its return value is not iterable
+    at Sidebar (Sidebar.tsx:150:22)
+    at renderWithHooks (chunk-WERSD76P.js?v=83ba01e6:11548:26)
+    at mountIndeterminateComponent (chunk-WERSD76P.js?v=83ba01e6:14926:21)
+    at beginWork (chunk-WERSD76P.js?v=83ba01e6:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-WERSD76P.js?v=83ba01e6:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-WERSD76P.js?v=83ba01e6:3699:24)
+    at invokeGuardedCallback (chunk-WERSD76P.js?v=83ba01e6:3733:39)
+    at beginWork$1 (chunk-WERSD76P.js?v=83ba01e6:19765:15)
+    at performUnitOfWork (chunk-WERSD76P.js?v=83ba01e6:19198:20)
+    at workLoopSync (chunk-WERSD76P.js?v=83ba01e6:19137:13)
+Sidebar @ Sidebar.tsx:150
+renderWithHooks @ chunk-WERSD76P.js?v=83ba01e6:11548
+mountIndeterminateComponent @ chunk-WERSD76P.js?v=83ba01e6:14926
+beginWork @ chunk-WERSD76P.js?v=83ba01e6:15914
+callCallback2 @ chunk-WERSD76P.js?v=83ba01e6:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=83ba01e6:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=83ba01e6:3733
+beginWork$1 @ chunk-WERSD76P.js?v=83ba01e6:19765
+performUnitOfWork @ chunk-WERSD76P.js?v=83ba01e6:19198
+workLoopSync @ chunk-WERSD76P.js?v=83ba01e6:19137
+renderRootSync @ chunk-WERSD76P.js?v=83ba01e6:19116
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=83ba01e6:18678
+workLoop @ chunk-WERSD76P.js?v=83ba01e6:197
+flushWork @ chunk-WERSD76P.js?v=83ba01e6:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=83ba01e6:384
+Sidebar.tsx:150 Uncaught TypeError: useLocation is not a function or its return value is not iterable
+    at Sidebar (Sidebar.tsx:150:22)
+    at renderWithHooks (chunk-WERSD76P.js?v=83ba01e6:11548:26)
+    at mountIndeterminateComponent (chunk-WERSD76P.js?v=83ba01e6:14926:21)
+    at beginWork (chunk-WERSD76P.js?v=83ba01e6:15914:22)
+    at beginWork$1 (chunk-WERSD76P.js?v=83ba01e6:19753:22)
+    at performUnitOfWork (chunk-WERSD76P.js?v=83ba01e6:19198:20)
+    at workLoopSync (chunk-WERSD76P.js?v=83ba01e6:19137:13)
+    at renderRootSync (chunk-WERSD76P.js?v=83ba01e6:19116:15)
+    at performConcurrentWorkOnRoot (chunk-WERSD76P.js?v=83ba01e6:18678:83)
+    at workLoop (chunk-WERSD76P.js?v=83ba01e6:197:42)
+Sidebar @ Sidebar.tsx:150
+renderWithHooks @ chunk-WERSD76P.js?v=83ba01e6:11548
+mountIndeterminateComponent @ chunk-WERSD76P.js?v=83ba01e6:14926
+beginWork @ chunk-WERSD76P.js?v=83ba01e6:15914
+beginWork$1 @ chunk-WERSD76P.js?v=83ba01e6:19753
+performUnitOfWork @ chunk-WERSD76P.js?v=83ba01e6:19198
+workLoopSync @ chunk-WERSD76P.js?v=83ba01e6:19137
+renderRootSync @ chunk-WERSD76P.js?v=83ba01e6:19116
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=83ba01e6:18678
+workLoop @ chunk-WERSD76P.js?v=83ba01e6:197
+flushWork @ chunk-WERSD76P.js?v=83ba01e6:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=83ba01e6:384
+Sidebar.tsx:150 Uncaught TypeError: useLocation is not a function or its return value is not iterable
+    at Sidebar (Sidebar.tsx:150:22)
+    at renderWithHooks (chunk-WERSD76P.js?v=83ba01e6:11548:26)
+    at mountIndeterminateComponent (chunk-WERSD76P.js?v=83ba01e6:14926:21)
+    at beginWork (chunk-WERSD76P.js?v=83ba01e6:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-WERSD76P.js?v=83ba01e6:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-WERSD76P.js?v=83ba01e6:3699:24)
+    at invokeGuardedCallback (chunk-WERSD76P.js?v=83ba01e6:3733:39)
+    at beginWork$1 (chunk-WERSD76P.js?v=83ba01e6:19765:15)
+    at performUnitOfWork (chunk-WERSD76P.js?v=83ba01e6:19198:20)
+    at workLoopConcurrent (chunk-WERSD76P.js?v=83ba01e6:19189:13)
+Sidebar @ Sidebar.tsx:150
+renderWithHooks @ chunk-WERSD76P.js?v=83ba01e6:11548
+mountIndeterminateComponent @ chunk-WERSD76P.js?v=83ba01e6:14926
+beginWork @ chunk-WERSD76P.js?v=83ba01e6:15914
+callCallback2 @ chunk-WERSD76P.js?v=83ba01e6:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=83ba01e6:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=83ba01e6:3733
+beginWork$1 @ chunk-WERSD76P.js?v=83ba01e6:19765
+performUnitOfWork @ chunk-WERSD76P.js?v=83ba01e6:19198
+workLoopConcurrent @ chunk-WERSD76P.js?v=83ba01e6:19189
+renderRootConcurrent @ chunk-WERSD76P.js?v=83ba01e6:19164
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=83ba01e6:18678
+workLoop @ chunk-WERSD76P.js?v=83ba01e6:197
+flushWork @ chunk-WERSD76P.js?v=83ba01e6:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=83ba01e6:384
+Sidebar.tsx:150 Uncaught TypeError: useLocation is not a function or its return value is not iterable
+    at Sidebar (Sidebar.tsx:150:22)
+    at renderWithHooks (chunk-WERSD76P.js?v=83ba01e6:11548:26)
+    at mountIndeterminateComponent (chunk-WERSD76P.js?v=83ba01e6:14926:21)
+    at beginWork (chunk-WERSD76P.js?v=83ba01e6:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-WERSD76P.js?v=83ba01e6:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-WERSD76P.js?v=83ba01e6:3699:24)
+    at invokeGuardedCallback (chunk-WERSD76P.js?v=83ba01e6:3733:39)
+    at beginWork$1 (chunk-WERSD76P.js?v=83ba01e6:19765:15)
+    at performUnitOfWork (chunk-WERSD76P.js?v=83ba01e6:19198:20)
+    at workLoopSync (chunk-WERSD76P.js?v=83ba01e6:19137:13)
+Sidebar @ Sidebar.tsx:150
+renderWithHooks @ chunk-WERSD76P.js?v=83ba01e6:11548
+mountIndeterminateComponent @ chunk-WERSD76P.js?v=83ba01e6:14926
+beginWork @ chunk-WERSD76P.js?v=83ba01e6:15914
+callCallback2 @ chunk-WERSD76P.js?v=83ba01e6:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=83ba01e6:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=83ba01e6:3733
+beginWork$1 @ chunk-WERSD76P.js?v=83ba01e6:19765
+performUnitOfWork @ chunk-WERSD76P.js?v=83ba01e6:19198
+workLoopSync @ chunk-WERSD76P.js?v=83ba01e6:19137
+renderRootSync @ chunk-WERSD76P.js?v=83ba01e6:19116
+recoverFromConcurrentError @ chunk-WERSD76P.js?v=83ba01e6:18736
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=83ba01e6:18684
+workLoop @ chunk-WERSD76P.js?v=83ba01e6:197
+flushWork @ chunk-WERSD76P.js?v=83ba01e6:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=83ba01e6:384
+hook.js:608 The above error occurred in the <Sidebar> component:
+
+    at Sidebar (http://localhost:5173/src/components/Layout/Sidebar.tsx:175:27)
+    at div
+    at div
+    at DashboardLayout (http://localhost:5173/src/components/Layout/DashboardLayout.tsx:21:35)
+    at ProtectedRoute (http://localhost:5173/src/App.tsx:39:27)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=83ba01e6:5455:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=83ba01e6:6188:3)
+    at AppRoutes
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=83ba01e6:6131:13)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=83ba01e6:9149:3)
+    at AuthProvider (http://localhost:5173/src/contexts/AuthContext.tsx:22:32)
+    at MockProvider (http://localhost:5173/src/contexts/MockContext.tsx:20:32)
+    at Provider (http://localhost:5173/node_modules/.vite/deps/chunk-VIFX6DEG.js?v=83ba01e6:48:15)
+    at TooltipProvider (http://localhost:5173/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=83ba01e6:59:5)
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/@tanstack_react-query.js?v=83ba01e6:2805:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+overrideMethod @ hook.js:608
+logCapturedError @ chunk-WERSD76P.js?v=83ba01e6:14032
+update.callback @ chunk-WERSD76P.js?v=83ba01e6:14052
+callCallback @ chunk-WERSD76P.js?v=83ba01e6:11248
+commitUpdateQueue @ chunk-WERSD76P.js?v=83ba01e6:11265
+commitLayoutEffectOnFiber @ chunk-WERSD76P.js?v=83ba01e6:17093
+commitLayoutMountEffects_complete @ chunk-WERSD76P.js?v=83ba01e6:17980
+commitLayoutEffects_begin @ chunk-WERSD76P.js?v=83ba01e6:17969
+commitLayoutEffects @ chunk-WERSD76P.js?v=83ba01e6:17920
+commitRootImpl @ chunk-WERSD76P.js?v=83ba01e6:19353
+commitRoot @ chunk-WERSD76P.js?v=83ba01e6:19277
+finishConcurrentRender @ chunk-WERSD76P.js?v=83ba01e6:18760
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=83ba01e6:18718
+workLoop @ chunk-WERSD76P.js?v=83ba01e6:197
+flushWork @ chunk-WERSD76P.js?v=83ba01e6:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=83ba01e6:384
+chunk-WERSD76P.js?v=83ba01e6:19413 Uncaught TypeError: useLocation is not a function or its return value is not iterable
+    at Sidebar (Sidebar.tsx:150:22)
+    at renderWithHooks (chunk-WERSD76P.js?v=83ba01e6:11548:26)
+    at mountIndeterminateComponent (chunk-WERSD76P.js?v=83ba01e6:14926:21)
+    at beginWork (chunk-WERSD76P.js?v=83ba01e6:15914:22)
+    at beginWork$1 (chunk-WERSD76P.js?v=83ba01e6:19753:22)
+    at performUnitOfWork (chunk-WERSD76P.js?v=83ba01e6:19198:20)
+    at workLoopSync (chunk-WERSD76P.js?v=83ba01e6:19137:13)
+    at renderRootSync (chunk-WERSD76P.js?v=83ba01e6:19116:15)
+    at recoverFromConcurrentError (chunk-WERSD76P.js?v=83ba01e6:18736:28)
+    at performConcurrentWorkOnRoot (chunk-WERSD76P.js?v=83ba01e6:18684:30)
+Sidebar @ Sidebar.tsx:150
+renderWithHooks @ chunk-WERSD76P.js?v=83ba01e6:11548
+mountIndeterminateComponent @ chunk-WERSD76P.js?v=83ba01e6:14926
+beginWork @ chunk-WERSD76P.js?v=83ba01e6:15914
+beginWork$1 @ chunk-WERSD76P.js?v=83ba01e6:19753
+performUnitOfWork @ chunk-WERSD76P.js?v=83ba01e6:19198
+workLoopSync @ chunk-WERSD76P.js?v=83ba01e6:19137
+renderRootSync @ chunk-WERSD76P.js?v=83ba01e6:19116
+recoverFromConcurrentError @ chunk-WERSD76P.js?v=83ba01e6:18736
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=83ba01e6:18684
+workLoop @ chunk-WERSD76P.js?v=83ba01e6:197
+flushWork @ chunk-WERSD76P.js?v=83ba01e6:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=83ba01e6:384
