@@ -1,6 +1,4 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
@@ -29,93 +27,30 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <DashboardLayout>{children}</DashboardLayout>;
 }
 
-function PublicRoute({ children }: { children: React.ReactNode }) {
+function AppRoutes() {
   const { isAuthenticated } = useAuth();
 
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
-  return <>{children}</>;
-}
-
-function AppRoutes() {
   return (
     <Routes>
-      <Route path="/login" element={
-        <PublicRoute>
-          <LoginPage />
-        </PublicRoute>
-      } />
-
-      <Route path="/dashboard" element={
-        <ProtectedRoute>
-          <DashboardPage />
-        </ProtectedRoute>
-      } />
-
-      <Route path="/categoria-chamado" element={
-        <ProtectedRoute>
-          <CategoriaChamadoPage />
-        </ProtectedRoute>
-      } />
-
-      <Route path="/dispositivos" element={
-        <ProtectedRoute>
-          <DispositivoPage />
-        </ProtectedRoute>
-      } />
-
-      <Route path="/etapas" element={
-        <ProtectedRoute>
-          <EtapaPage />
-        </ProtectedRoute>
-      } />
-
-      <Route path="/item-leito" element={
-        <ProtectedRoute>
-          <ItemLeitoPage />
-        </ProtectedRoute>
-      } />
-
-      <Route path="/item-local" element={
-        <ProtectedRoute>
-          <ItemLocalPage />
-        </ProtectedRoute>
-      } />
-
-      <Route path="/tipo-limpeza" element={
-        <ProtectedRoute>
-          <TipoLimpezaPage />
-        </ProtectedRoute>
-      } />
-
-      <Route path="/tipo-operador" element={
-        <ProtectedRoute>
-          <TipoOperadorPage />
-        </ProtectedRoute>
-      } />
-
-      <Route path="/tipo-acesso" element={
-        <ProtectedRoute>
-          <TipoAcessoPage />
-        </ProtectedRoute>
-      } />
-
-      <Route path="/status-erro-qrcode" element={
-        <ProtectedRoute>
-          <StatusErroQrcodePage />
-        </ProtectedRoute>
-      } />
-
-      <Route path="/operadores" element={
-        <ProtectedRoute>
-          <OperadorPage />
-        </ProtectedRoute>
-      } />
-
-      <Route path="/" element={<Navigate to="/login" replace />} />
-
+      <Route 
+        path="/login" 
+        element={
+          isAuthenticated ? 
+            <Navigate to="/" replace /> : 
+            <LoginPage />
+        } 
+      />
+      <Route path="/" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+      <Route path="/categoria-chamado" element={<ProtectedRoute><CategoriaChamadoPage /></ProtectedRoute>} />
+      <Route path="/dispositivo" element={<ProtectedRoute><DispositivoPage /></ProtectedRoute>} />
+      <Route path="/etapa" element={<ProtectedRoute><EtapaPage /></ProtectedRoute>} />
+      <Route path="/item-leito" element={<ProtectedRoute><ItemLeitoPage /></ProtectedRoute>} />
+      <Route path="/item-local" element={<ProtectedRoute><ItemLocalPage /></ProtectedRoute>} />
+      <Route path="/tipo-limpeza" element={<ProtectedRoute><TipoLimpezaPage /></ProtectedRoute>} />
+      <Route path="/tipo-operador" element={<ProtectedRoute><TipoOperadorPage /></ProtectedRoute>} />
+      <Route path="/tipo-acesso" element={<ProtectedRoute><TipoAcessoPage /></ProtectedRoute>} />
+      <Route path="/status-erro-qrcode" element={<ProtectedRoute><StatusErroQrcodePage /></ProtectedRoute>} />
+      <Route path="/operador" element={<ProtectedRoute><OperadorPage /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
@@ -123,16 +58,14 @@ function AppRoutes() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <AuthProvider>
-          <Router>
-            <Toaster />
-            <AppRoutes />
-          </Router>
-        </AuthProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <TooltipProvider>
+      <AuthProvider>
+        <Router>
+          <Toaster />
+          <AppRoutes />
+        </Router>
+      </AuthProvider>
+    </TooltipProvider>
   );
 }
 

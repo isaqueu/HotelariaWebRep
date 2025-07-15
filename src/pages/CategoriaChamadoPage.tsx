@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { MaterialCard } from '../components/ui/material-card';
 import { MaterialButton } from '../components/ui/material-button';
@@ -12,98 +11,77 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
-import { queryClient } from '@/lib/queryClient';
-import { categoriaChamadoApi } from '../services/api';
+import { categoriaChamadoService } from '../services/categoriaChamadoService';
 import type { CategoriaChamado } from '../types';
 
 export function CategoriaChamadoPage() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<CategoriaChamado | null>(null);
+  const [categorias, setCategorias] = useState<CategoriaChamado[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const form = useForm<Omit<CategoriaChamado, 'cd_categoria_chamado'>>({
     defaultValues: {
       ds_categoria_chamado: '',
+      prioridade: 1,
       sn_ativo: 'S',
     },
   });
 
-  // Queries
-  const { data: categorias = [], isLoading } = useQuery({
-    queryKey: ['/api/categoria-chamado'],
-    queryFn: () => categoriaChamadoApi.getAll(),
-  });
+  const loadCategorias = async () => {
+    try {
+      setIsLoading(true);
+      const data = await categoriaChamadoService.getAll();
+      setCategorias(data);
+    } catch (error) {
+      console.error('Erro ao carregar categorias:', error);
+      toast({ title: 'Erro ao carregar categorias', variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  // Mutations
-  const createMutation = useMutation({
-    mutationFn: (data: Omit<CategoriaChamado, 'cd_categoria_chamado'>) =>
-      categoriaChamadoApi.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/categoria-chamado'] });
-      toast({ title: 'Categoria criada com sucesso!' });
+  useEffect(() => {
+    loadCategorias();
+  }, []);
+
+  const handleSubmit = async (data: Omit<CategoriaChamado, 'cd_categoria_chamado'>) => {
+    try {
+      if (editingItem) {
+        await categoriaChamadoService.update(editingItem.cd_categoria_chamado, data);
+        toast({ title: 'Categoria de chamado atualizada com sucesso!' });
+      } else {
+        await categoriaChamadoService.create(data);
+        toast({ title: 'Categoria de chamado criada com sucesso!' });
+      }
       setIsCreateModalOpen(false);
-      form.reset();
-    },
-    onError: () => {
-      toast({ title: 'Erro ao criar categoria', variant: 'destructive' });
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<CategoriaChamado> }) =>
-      categoriaChamadoApi.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/categoria-chamado'] });
-      toast({ title: 'Categoria atualizada com sucesso!' });
       setEditingItem(null);
       form.reset();
-    },
-    onError: () => {
-      toast({ title: 'Erro ao atualizar categoria', variant: 'destructive' });
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) =>
-      categoriaChamadoApi.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/categoria-chamado'] });
-      toast({ title: 'Categoria excluída com sucesso!' });
-    },
-    onError: () => {
-      toast({ title: 'Erro ao excluir categoria', variant: 'destructive' });
-    },
-  });
-
-  // Filtered data
-  const filteredCategorias = categorias.filter(categoria => {
-    const matchesSearch = categoria.ds_categoria_chamado.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || statusFilter === '' || categoria.sn_ativo === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
-
-  const handleSubmit = (data: Omit<CategoriaChamado, 'cd_categoria_chamado'>) => {
-    if (editingItem) {
-      updateMutation.mutate({ id: editingItem.cd_categoria_chamado, data });
-    } else {
-      createMutation.mutate(data);
+      loadCategorias();
+    } catch (error) {
+      console.error('Erro ao salvar categoria:', error);
+      toast({ title: 'Erro ao salvar categoria de chamado', variant: 'destructive' });
     }
   };
 
   const handleEdit = (categoria: CategoriaChamado) => {
     setEditingItem(categoria);
-    form.reset({
-      ds_categoria_chamado: categoria.ds_categoria_chamado,
-      sn_ativo: categoria.sn_ativo,
-    });
+    form.reset(categoria);
     setIsCreateModalOpen(true);
   };
 
-  const handleDelete = (id: number) => {
-    if (confirm('Tem certeza que deseja excluir esta categoria?')) {
-      deleteMutation.mutate(id);
+  const handleDelete = async (id: number) => {
+    if (confirm('Tem certeza que deseja excluir esta categoria de chamado?')) {
+      try {
+        await categoriaChamadoService.delete(id);
+        toast({ title: 'Categoria de chamado excluída com sucesso!' });
+        loadCategorias();
+      } catch (error) {
+        console.error('Erro ao excluir categoria:', error);
+        toast({ title: 'Erro ao excluir categoria de chamado', variant: 'destructive' });
+      }
     }
   };
 
@@ -113,34 +91,31 @@ export function CategoriaChamadoPage() {
     setIsCreateModalOpen(true);
   };
 
+  const filteredCategorias = categorias.filter(categoria =>
+    categoria.ds_categoria_chamado.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   if (isLoading) {
     return <div className="flex justify-center p-8">Carregando...</div>;
   }
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-medium text-gray-800 mb-2">Categoria de Chamados</h1>
-          <p className="text-gray-600">Gerencie as categorias de chamados do sistema</p>
-        </div>
-
+        <h1 className="text-2xl font-bold">Categorias de Chamado</h1>
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
-            <MaterialButton onClick={openCreateModal} className="flex items-center">
-              <Plus className="mr-2 h-5 w-5" />
+            <MaterialButton onClick={openCreateModal} className="gap-2">
+              <Plus className="w-4 h-4" />
               Nova Categoria
             </MaterialButton>
           </DialogTrigger>
-
-          <DialogContent>
+          <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>
-                {editingItem ? 'Editar Categoria' : 'Nova Categoria'}
+                {editingItem ? 'Editar Categoria' : 'Nova Categoria de Chamado'}
               </DialogTitle>
             </DialogHeader>
-
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                 <FormField
@@ -150,7 +125,7 @@ export function CategoriaChamadoPage() {
                     <FormItem>
                       <FormControl>
                         <FloatingLabelInput
-                          label="Descrição da Categoria"
+                          label="Descrição"
                           {...field}
                           required
                         />
@@ -159,42 +134,58 @@ export function CategoriaChamadoPage() {
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
-                  name="sn_ativo"
+                  name="prioridade"
                   render={({ field }) => (
-                    <FormItem className="flex items-center space-x-2">
+                    <FormItem>
                       <FormControl>
-                        <Switch
-                          checked={field.value === 'S'}
-                          onCheckedChange={(checked) => field.onChange(checked ? 'S' : 'N')}
-                        />
+                        <Select 
+                          value={field.value.toString()} 
+                          onValueChange={(value) => field.onChange(parseInt(value))}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione a prioridade" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1">Baixa</SelectItem>
+                            <SelectItem value="2">Média</SelectItem>
+                            <SelectItem value="3">Alta</SelectItem>
+                            <SelectItem value="4">Crítica</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
-                      <Label>Ativo</Label>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
-                <div className="flex justify-end space-x-2">
-                  <MaterialButton
-                    type="button"
-                    variant="outline"
+                <FormField
+                  control={form.control}
+                  name="sn_ativo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center space-x-2">
+                        <Switch
+                          checked={field.value === 'S'}
+                          onCheckedChange={(checked) => field.onChange(checked ? 'S' : 'N')}
+                        />
+                        <Label>Ativo</Label>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="flex gap-2 pt-4">
+                  <MaterialButton type="submit" className="flex-1">
+                    {editingItem ? 'Atualizar' : 'Criar'}
+                  </MaterialButton>
+                  <MaterialButton 
+                    type="button" 
+                    variant="outline" 
                     onClick={() => setIsCreateModalOpen(false)}
+                    className="flex-1"
                   >
                     Cancelar
-                  </MaterialButton>
-                  <MaterialButton
-                    type="submit"
-                    disabled={createMutation.isPending || updateMutation.isPending}
-                  >
-                    {createMutation.isPending || updateMutation.isPending
-                      ? 'Salvando...'
-                      : editingItem
-                      ? 'Atualizar'
-                      : 'Criar'
-                    }
                   </MaterialButton>
                 </div>
               </form>
@@ -203,100 +194,53 @@ export function CategoriaChamadoPage() {
         </Dialog>
       </div>
 
-      {/* Filters and Search */}
-      <MaterialCard className="p-6">
-        <div className="flex flex-col md:flex-row gap-4 items-center">
-          <div className="flex-1">
-            <FloatingLabelInput
-              label="Buscar categoria..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              icon={<Search className="h-5 w-5" />}
-            />
-          </div>
-          <div className="flex gap-2">
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Todos os Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos os Status</SelectItem>
-                <SelectItem value="S">Ativo</SelectItem>
-                <SelectItem value="N">Inativo</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+      <div className="flex items-center gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <FloatingLabelInput
+            label="Pesquisar categorias..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
         </div>
-      </MaterialCard>
+      </div>
 
-      {/* Data Table */}
-      <MaterialCard className="overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="table-header-highlight border-b border-primary-blue/30">
-              <tr>
-                <th className="px-6 py-4 text-left text-xs table-header-text uppercase tracking-wider">
-                  Código
-                </th>
-                <th className="px-6 py-4 text-left text-xs table-header-text uppercase tracking-wider">
-                  Descrição
-                </th>
-                <th className="px-6 py-4 text-left text-xs table-header-text uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-left text-xs table-header-text uppercase tracking-wider">
-                  Ações
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredCategorias.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
-                    Nenhuma categoria encontrada
-                  </td>
-                </tr>
-              ) : (
-                filteredCategorias.map((categoria) => (
-                  <tr key={categoria.cd_categoria_chamado} className="table-hover">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {categoria.cd_categoria_chamado}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {categoria.ds_categoria_chamado}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <Badge variant={categoria.sn_ativo === 'S' ? 'default' : 'secondary'}>
-                        {categoria.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
-                      </Badge>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                      <MaterialButton
-                        variant="outline"
-                        size="sm"
-                        elevated={false}
-                        onClick={() => handleEdit(categoria)}
-                        className="p-2"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </MaterialButton>
-                      <MaterialButton
-                        variant="destructive"
-                        size="sm"
-                        elevated={false}
-                        onClick={() => handleDelete(categoria.cd_categoria_chamado)}
-                        className="p-2"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </MaterialButton>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </MaterialCard>
+      <div className="grid gap-4">
+        {filteredCategorias.map((categoria) => (
+          <MaterialCard key={categoria.cd_categoria_chamado} className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <h3 className="font-semibold">{categoria.ds_categoria_chamado}</h3>
+                <div className="flex gap-2 mt-2">
+                  <Badge variant={categoria.prioridade === 4 ? 'destructive' : categoria.prioridade === 3 ? 'default' : 'secondary'}>
+                    Prioridade: {categoria.prioridade === 1 ? 'Baixa' : categoria.prioridade === 2 ? 'Média' : categoria.prioridade === 3 ? 'Alta' : 'Crítica'}
+                  </Badge>
+                  <Badge variant={categoria.sn_ativo === 'S' ? 'default' : 'secondary'}>
+                    {categoria.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
+                  </Badge>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <MaterialButton
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleEdit(categoria)}
+                >
+                  <Edit className="w-4 h-4" />
+                </MaterialButton>
+                <MaterialButton
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDelete(categoria.cd_categoria_chamado)}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </MaterialButton>
+              </div>
+            </div>
+          </MaterialCard>
+        ))}
+      </div>
     </div>
   );
 }
