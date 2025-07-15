@@ -1,0 +1,232 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .hover\:scale-102:hover {
+    transform: scale(1.02);
+  }
+}
+
+:root {
+  /* Sistema de cores baseado em azul - inspirado na paleta verde da referência */
+  
+  /* Cores principais do sistema (equivalentes aos tons verdes da imagem) */
+  --primary-blue-dark: hsl(214, 84%, 20%);      /* Azul escuro para header/topbar */
+  --primary-blue: hsl(214, 84%, 35%);           /* Azul médio para elementos ativos */
+  --primary-blue-light: hsl(214, 84%, 45%);     /* Azul vibrante para botões principais */
+  --primary-blue-soft: hsl(214, 50%, 85%);      /* Azul suave para backgrounds */
+  --primary-blue-pale: hsl(214, 30%, 95%);      /* Azul muito claro para fundos */
+  
+  /* Cores de apoio */
+  --accent-blue: hsl(214, 84%, 55%);            /* Azul de destaque */
+  --success-blue: hsl(214, 70%, 50%);           /* Azul para sucesso */
+  --info-blue: hsl(214, 60%, 60%);              /* Azul informativo */
+
+  /* Variáveis padrão adaptadas para o novo sistema */
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(214, 20%, 96%);
+  --muted-foreground: hsl(214, 10%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(214, 20%, 90%);
+  --input: hsl(214, 20%, 90%);
+  --primary: hsl(214, 84%, 45%);
+  --primary-foreground: hsl(214, 100%, 99%);
+  --secondary: hsl(214, 30%, 95%);
+  --secondary-foreground: hsl(214, 84%, 20%);
+  --accent: hsl(214, 50%, 85%);
+  --accent-foreground: hsl(214, 84%, 20%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(214, 84%, 45%);
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: hsl(214, 20%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(214, 10%, 15.9%);
+  --muted-foreground: hsl(214, 5%, 64.9%);
+  --popover: hsl(214, 20%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(214, 20%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(214, 10%, 15.9%);
+  --input: hsl(214, 10%, 15.9%);
+  --primary: hsl(214, 84%, 55%);
+  --primary-foreground: hsl(214, 20%, 3.9%);
+  --secondary: hsl(214, 10%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(214, 10%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(214, 20%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium;
+  }
+}
+
+@layer components {
+  /* Classes de utilidade para a paleta azul */
+  .bg-primary-blue-dark { background-color: hsl(214, 84%, 20%); }
+  .bg-primary-blue { background-color: hsl(214, 84%, 35%); }
+  .bg-primary-blue-light { background-color: hsl(214, 84%, 45%); }
+  .bg-primary-blue-soft { background-color: hsl(214, 50%, 85%); }
+  .bg-primary-blue-pale { background-color: hsl(214, 30%, 95%); }
+  
+  .text-primary-blue-dark { color: hsl(214, 84%, 20%); }
+  .text-primary-blue { color: hsl(214, 84%, 35%); }
+  .text-primary-blue-light { color: hsl(214, 84%, 45%); }
+  .text-white { color: white; }
+  
+  .border-primary-blue { border-color: hsl(214, 84%, 35%); }
+  .border-primary-blue-light { border-color: hsl(214, 84%, 45%); }
+
+  .material-ripple {
+    @apply relative overflow-hidden;
+  }
+  
+  .material-ripple::before {
+    content: '';
+    @apply absolute top-1/2 left-1/2 w-0 h-0 bg-white/20 rounded-full transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300;
+  }
+  
+  .material-ripple:active::before {
+    @apply w-72 h-72;
+  }
+
+  .floating-label-input:focus + label,
+  .floating-label-input:not(:placeholder-shown) + label {
+    @apply -translate-y-6 scale-75 text-primary;
+  }
+
+  .drawer-transition {
+    @apply transition-transform duration-300 ease-in-out;
+  }
+
+  .fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .table-hover:hover {
+    background-color: #eff6ff;
+    transition: background-color 0.2s ease;
+  }
+
+  /* Estilos para tabelas com headers destacados como na referência */
+  .table-header-highlight {
+    background: linear-gradient(to right, #bfdbfe, #e0f2fe);
+    border-left: 4px solid #3b82f6;
+    border-bottom: 2px solid #60a5fa;
+  }
+
+  .table-header-text {
+    color: #2563eb;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* Cards com background sutil */
+  .card-subtle {
+    @apply bg-gradient-to-br from-white via-blue-50/10 to-white;
+  }
+
+  .card-highlight {
+    background: linear-gradient(to right, hsl(214, 30%, 95%), white);
+    border-left: 4px solid hsl(214, 84%, 45%);
+  }
+
+  /* Indicadores circulares como na imagem */
+  .status-indicator {
+    @apply w-2 h-2 rounded-full;
+    background-color: #3b82f6;
+  }
+
+  .status-indicator-active {
+    @apply w-3 h-3 rounded-full animate-pulse;
+    background-color: #2563eb;
+  }
+
+  /* Badge melhorado para status */
+  .badge-ativo {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    background-color: #3b82f6;
+    color: white;
+  }
+
+  /* Responsividade para mobile */
+  @media (max-width: 1024px) {
+    .sidebar-mobile-overlay {
+      @apply fixed inset-0 bg-black/50 z-40;
+    }
+    
+    .navbar-mobile-menu {
+      @apply p-2 border border-blue-400 bg-blue-700/10 rounded-lg;
+    }
+    
+    .navbar-mobile-menu:hover {
+      @apply bg-blue-700/20;
+    }
+  }
+
+  /* Gradientes para navbar responsivos */
+  .navbar-gradient {
+    background: linear-gradient(to bottom, #3b82f6, #60a5fa);
+  }
+
+  .sidebar-gradient {
+    background: linear-gradient(to bottom, #f1f5f9, #e2e8f0, #f8fafc);
+  }
+
+  .sidebar-header-gradient {
+    background: linear-gradient(to right, #e2e8f0, #f1f5f9);
+    border-bottom: 1px solid #cbd5e1;
+  }
+
+  .shadow-md-1 {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  }
+
+  .shadow-md-2 {
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  }
+
+  .shadow-md-3 {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  }
+
+  .shadow-md-4 {
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+  }
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
