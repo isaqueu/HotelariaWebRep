@@ -59,12 +59,12 @@ function AppRoutes() {
 function App() {
   return (
     <TooltipProvider>
-      <AuthProvider>
-        <Router>
+      <Router>
+        <AuthProvider>
           <Toaster />
           <AppRoutes />
-        </Router>
-      </AuthProvider>
+        </AuthProvider>
+      </Router>
     </TooltipProvider>
   );
 }
