@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+
+import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { MaterialCard } from '../components/ui/material-card';
 import { MaterialButton } from '../components/ui/material-button';
@@ -8,8 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
-import { queryClient } from '@/lib/queryClient';
-import { tipoOperadorApi } from '../services/api';
+import { tipoOperadorService } from '../services/tipoOperadorService';
 import type { TipoOperador } from '../types';
 
 export function TipoOperadorPage() {
@@ -17,6 +16,8 @@ export function TipoOperadorPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<TipoOperador | null>(null);
+  const [tiposOperador, setTiposOperador] = useState<TipoOperador[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const form = useForm<Omit<TipoOperador, 'cd_tipo_operador'>>({
     defaultValues: {
@@ -24,63 +25,39 @@ export function TipoOperadorPage() {
     },
   });
 
-  // Queries
-  const { data: tiposOperador = [], isLoading } = useQuery({
-    queryKey: ['/api/tipo-operador'],
-    queryFn: () => tipoOperadorApi.getAll(),
-  });
+  const loadTiposOperador = async () => {
+    try {
+      setIsLoading(true);
+      const data = await tipoOperadorService.getAll();
+      setTiposOperador(data);
+    } catch (error) {
+      console.error('Erro ao carregar tipos de operador:', error);
+      toast({ title: 'Erro ao carregar tipos de operador', variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  // Mutations
-  const createMutation = useMutation({
-    mutationFn: (data: Omit<TipoOperador, 'cd_tipo_operador'>) =>
-      tipoOperadorApi.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tipo-operador'] });
-      toast({ title: 'Tipo de operador criado com sucesso!' });
+  useEffect(() => {
+    loadTiposOperador();
+  }, []);
+
+  const handleSubmit = async (data: Omit<TipoOperador, 'cd_tipo_operador'>) => {
+    try {
+      if (editingItem) {
+        await tipoOperadorService.update(editingItem.cd_tipo_operador, data);
+        toast({ title: 'Tipo de operador atualizado com sucesso!' });
+      } else {
+        await tipoOperadorService.create(data);
+        toast({ title: 'Tipo de operador criado com sucesso!' });
+      }
       setIsCreateModalOpen(false);
-      form.reset();
-    },
-    onError: () => {
-      toast({ title: 'Erro ao criar tipo de operador', variant: 'destructive' });
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<TipoOperador> }) =>
-      tipoOperadorApi.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tipo-operador'] });
-      toast({ title: 'Tipo de operador atualizado com sucesso!' });
       setEditingItem(null);
       form.reset();
-    },
-    onError: () => {
-      toast({ title: 'Erro ao atualizar tipo de operador', variant: 'destructive' });
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) =>
-      tipoOperadorApi.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tipo-operador'] });
-      toast({ title: 'Tipo de operador excluído com sucesso!' });
-    },
-    onError: () => {
-      toast({ title: 'Erro ao excluir tipo de operador', variant: 'destructive' });
-    },
-  });
-
-  // Filtered data
-  const filteredTipos = tiposOperador.filter(tipo =>
-    tipo.ds_tipo_operador.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleSubmit = (data: Omit<TipoOperador, 'cd_tipo_operador'>) => {
-    if (editingItem) {
-      updateMutation.mutate({ id: editingItem.cd_tipo_operador, data });
-    } else {
-      createMutation.mutate(data);
+      loadTiposOperador();
+    } catch (error) {
+      console.error('Erro ao salvar tipo de operador:', error);
+      toast({ title: 'Erro ao salvar tipo de operador', variant: 'destructive' });
     }
   };
 
@@ -90,9 +67,16 @@ export function TipoOperadorPage() {
     setIsCreateModalOpen(true);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (confirm('Tem certeza que deseja excluir este tipo de operador?')) {
-      deleteMutation.mutate(id);
+      try {
+        await tipoOperadorService.delete(id);
+        toast({ title: 'Tipo de operador excluído com sucesso!' });
+        loadTiposOperador();
+      } catch (error) {
+        console.error('Erro ao excluir tipo de operador:', error);
+        toast({ title: 'Erro ao excluir tipo de operador', variant: 'destructive' });
+      }
     }
   };
 
@@ -101,6 +85,11 @@ export function TipoOperadorPage() {
     form.reset();
     setIsCreateModalOpen(true);
   };
+
+  // Filtered data
+  const filteredTipos = tiposOperador.filter(tipo =>
+    tipo.ds_tipo_operador.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (isLoading) {
     return <div className="flex justify-center p-8">Carregando...</div>;
@@ -157,16 +146,8 @@ export function TipoOperadorPage() {
                   >
                     Cancelar
                   </MaterialButton>
-                  <MaterialButton
-                    type="submit"
-                    disabled={createMutation.isPending || updateMutation.isPending}
-                  >
-                    {createMutation.isPending || updateMutation.isPending
-                      ? 'Salvando...'
-                      : editingItem
-                      ? 'Atualizar'
-                      : 'Criar'
-                    }
+                  <MaterialButton type="submit">
+                    {editingItem ? 'Atualizar' : 'Criar'}
                   </MaterialButton>
                 </div>
               </form>

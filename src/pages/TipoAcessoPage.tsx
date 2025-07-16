@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+
+import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { MaterialCard } from '../components/ui/material-card';
 import { MaterialButton } from '../components/ui/material-button';
@@ -8,8 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
-import { queryClient } from '@/lib/queryClient';
-import { tipoAcessoApi } from '../services/api';
+import { tipoAcessoService } from '../services/tipoAcessoService';
 import type { TipoAcesso } from '../types';
 
 export function TipoAcessoPage() {
@@ -17,6 +16,8 @@ export function TipoAcessoPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<TipoAcesso | null>(null);
+  const [tiposAcesso, setTiposAcesso] = useState<TipoAcesso[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const form = useForm<Omit<TipoAcesso, 'cd_tipo_acesso'>>({
     defaultValues: {
@@ -24,63 +25,39 @@ export function TipoAcessoPage() {
     },
   });
 
-  // Queries
-  const { data: tiposAcesso = [], isLoading } = useQuery({
-    queryKey: ['/api/tipo-acesso'],
-    queryFn: () => tipoAcessoApi.getAll(),
-  });
+  const loadTiposAcesso = async () => {
+    try {
+      setIsLoading(true);
+      const data = await tipoAcessoService.getAll();
+      setTiposAcesso(data);
+    } catch (error) {
+      console.error('Erro ao carregar tipos de acesso:', error);
+      toast({ title: 'Erro ao carregar tipos de acesso', variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  // Mutations
-  const createMutation = useMutation({
-    mutationFn: (data: Omit<TipoAcesso, 'cd_tipo_acesso'>) =>
-      tipoAcessoApi.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tipo-acesso'] });
-      toast({ title: 'Tipo de acesso criado com sucesso!' });
+  useEffect(() => {
+    loadTiposAcesso();
+  }, []);
+
+  const handleSubmit = async (data: Omit<TipoAcesso, 'cd_tipo_acesso'>) => {
+    try {
+      if (editingItem) {
+        await tipoAcessoService.update(editingItem.cd_tipo_acesso, data);
+        toast({ title: 'Tipo de acesso atualizado com sucesso!' });
+      } else {
+        await tipoAcessoService.create(data);
+        toast({ title: 'Tipo de acesso criado com sucesso!' });
+      }
       setIsCreateModalOpen(false);
-      form.reset();
-    },
-    onError: () => {
-      toast({ title: 'Erro ao criar tipo de acesso', variant: 'destructive' });
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<TipoAcesso> }) =>
-      tipoAcessoApi.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tipo-acesso'] });
-      toast({ title: 'Tipo de acesso atualizado com sucesso!' });
       setEditingItem(null);
       form.reset();
-    },
-    onError: () => {
-      toast({ title: 'Erro ao atualizar tipo de acesso', variant: 'destructive' });
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) =>
-      tipoAcessoApi.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tipo-acesso'] });
-      toast({ title: 'Tipo de acesso excluído com sucesso!' });
-    },
-    onError: () => {
-      toast({ title: 'Erro ao excluir tipo de acesso', variant: 'destructive' });
-    },
-  });
-
-  // Filtered data
-  const filteredTipos = tiposAcesso.filter(tipo =>
-    tipo.ds_tipo_acesso.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleSubmit = (data: Omit<TipoAcesso, 'cd_tipo_acesso'>) => {
-    if (editingItem) {
-      updateMutation.mutate({ id: editingItem.cd_tipo_acesso, data });
-    } else {
-      createMutation.mutate(data);
+      loadTiposAcesso();
+    } catch (error) {
+      console.error('Erro ao salvar tipo de acesso:', error);
+      toast({ title: 'Erro ao salvar tipo de acesso', variant: 'destructive' });
     }
   };
 
@@ -90,9 +67,16 @@ export function TipoAcessoPage() {
     setIsCreateModalOpen(true);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (confirm('Tem certeza que deseja excluir este tipo de acesso?')) {
-      deleteMutation.mutate(id);
+      try {
+        await tipoAcessoService.delete(id);
+        toast({ title: 'Tipo de acesso excluído com sucesso!' });
+        loadTiposAcesso();
+      } catch (error) {
+        console.error('Erro ao excluir tipo de acesso:', error);
+        toast({ title: 'Erro ao excluir tipo de acesso', variant: 'destructive' });
+      }
     }
   };
 
@@ -101,6 +85,11 @@ export function TipoAcessoPage() {
     form.reset();
     setIsCreateModalOpen(true);
   };
+
+  // Filtered data
+  const filteredTipos = tiposAcesso.filter(tipo =>
+    tipo.ds_tipo_acesso.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (isLoading) {
     return <div className="flex justify-center p-8">Carregando...</div>;
@@ -157,16 +146,8 @@ export function TipoAcessoPage() {
                   >
                     Cancelar
                   </MaterialButton>
-                  <MaterialButton
-                    type="submit"
-                    disabled={createMutation.isPending || updateMutation.isPending}
-                  >
-                    {createMutation.isPending || updateMutation.isPending
-                      ? 'Salvando...'
-                      : editingItem
-                      ? 'Atualizar'
-                      : 'Criar'
-                    }
+                  <MaterialButton type="submit">
+                    {editingItem ? 'Atualizar' : 'Criar'}
                   </MaterialButton>
                 </div>
               </form>

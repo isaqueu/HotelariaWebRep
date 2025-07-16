@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+
+import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { MaterialCard } from '../components/ui/material-card';
 import { MaterialButton } from '../components/ui/material-button';
@@ -11,8 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
-import { queryClient } from '@/lib/queryClient';
-import { operadorApi } from '../services/api';
+import { operadorService } from '../services/operadorService';
 import type { Operador } from '../types';
 
 export function OperadorPage() {
@@ -20,6 +19,8 @@ export function OperadorPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Operador | null>(null);
+  const [operadores, setOperadores] = useState<Operador[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const form = useForm<Omit<Operador, 'cd_operador'>>({
     defaultValues: {
@@ -31,64 +32,39 @@ export function OperadorPage() {
     },
   });
 
-  // Queries
-  const { data: operadores = [], isLoading } = useQuery({
-    queryKey: ['/api/operador'],
-    queryFn: () => operadorApi.getAll(),
-  });
+  const loadOperadores = async () => {
+    try {
+      setIsLoading(true);
+      const data = await operadorService.getAll();
+      setOperadores(data);
+    } catch (error) {
+      console.error('Erro ao carregar operadores:', error);
+      toast({ title: 'Erro ao carregar operadores', variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  // Mutations
-  const createMutation = useMutation({
-    mutationFn: (data: Omit<Operador, 'cd_operador'>) =>
-      operadorApi.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/operador'] });
-      toast({ title: 'Operador criado com sucesso!' });
+  useEffect(() => {
+    loadOperadores();
+  }, []);
+
+  const handleSubmit = async (data: Omit<Operador, 'cd_operador'>) => {
+    try {
+      if (editingItem) {
+        await operadorService.update(editingItem.cd_operador, data);
+        toast({ title: 'Operador atualizado com sucesso!' });
+      } else {
+        await operadorService.create(data);
+        toast({ title: 'Operador criado com sucesso!' });
+      }
       setIsCreateModalOpen(false);
-      form.reset();
-    },
-    onError: () => {
-      toast({ title: 'Erro ao criar operador', variant: 'destructive' });
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<Operador> }) =>
-      operadorApi.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/operador'] });
-      toast({ title: 'Operador atualizado com sucesso!' });
       setEditingItem(null);
       form.reset();
-    },
-    onError: () => {
-      toast({ title: 'Erro ao atualizar operador', variant: 'destructive' });
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) =>
-      operadorApi.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/operador'] });
-      toast({ title: 'Operador excluído com sucesso!' });
-    },
-    onError: () => {
-      toast({ title: 'Erro ao excluir operador', variant: 'destructive' });
-    },
-  });
-
-  // Filtered data
-  const filteredOperadores = operadores.filter(operador =>
-    operador.nm_operador.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    operador.cd_usuario_sw.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleSubmit = (data: Omit<Operador, 'cd_operador'>) => {
-    if (editingItem) {
-      updateMutation.mutate({ id: editingItem.cd_operador, data });
-    } else {
-      createMutation.mutate(data);
+      loadOperadores();
+    } catch (error) {
+      console.error('Erro ao salvar operador:', error);
+      toast({ title: 'Erro ao salvar operador', variant: 'destructive' });
     }
   };
 
@@ -98,9 +74,16 @@ export function OperadorPage() {
     setIsCreateModalOpen(true);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (confirm('Tem certeza que deseja excluir este operador?')) {
-      deleteMutation.mutate(id);
+      try {
+        await operadorService.delete(id);
+        toast({ title: 'Operador excluído com sucesso!' });
+        loadOperadores();
+      } catch (error) {
+        console.error('Erro ao excluir operador:', error);
+        toast({ title: 'Erro ao excluir operador', variant: 'destructive' });
+      }
     }
   };
 
@@ -109,6 +92,12 @@ export function OperadorPage() {
     form.reset();
     setIsCreateModalOpen(true);
   };
+
+  // Filtered data
+  const filteredOperadores = operadores.filter(operador =>
+    operador.nm_operador.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    operador.cd_usuario_sw.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (isLoading) {
     return <div className="flex justify-center p-8">Carregando...</div>;
@@ -235,16 +224,8 @@ export function OperadorPage() {
                   >
                     Cancelar
                   </MaterialButton>
-                  <MaterialButton
-                    type="submit"
-                    disabled={createMutation.isPending || updateMutation.isPending}
-                  >
-                    {createMutation.isPending || updateMutation.isPending
-                      ? 'Salvando...'
-                      : editingItem
-                      ? 'Atualizar'
-                      : 'Criar'
-                    }
+                  <MaterialButton type="submit">
+                    {editingItem ? 'Atualizar' : 'Criar'}
                   </MaterialButton>
                 </div>
               </form>

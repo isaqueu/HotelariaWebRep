@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+
+import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { MaterialCard } from '../components/ui/material-card';
 import { MaterialButton } from '../components/ui/material-button';
@@ -11,8 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
-import { queryClient } from '@/lib/queryClient';
-import { itemLocalApi } from '../services/api';
+import { itemLocalService } from '../services/itemLocalService';
 import type { ItemLocal } from '../types';
 
 export function ItemLocalPage() {
@@ -20,6 +19,8 @@ export function ItemLocalPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<ItemLocal | null>(null);
+  const [itensLocal, setItensLocal] = useState<ItemLocal[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const form = useForm<Omit<ItemLocal, 'cd_item_local'>>({
     defaultValues: {
@@ -28,63 +29,39 @@ export function ItemLocalPage() {
     },
   });
 
-  // Queries
-  const { data: itensLocal = [], isLoading } = useQuery({
-    queryKey: ['/api/item-local'],
-    queryFn: () => itemLocalApi.getAll(),
-  });
+  const loadItensLocal = async () => {
+    try {
+      setIsLoading(true);
+      const data = await itemLocalService.getAll();
+      setItensLocal(data);
+    } catch (error) {
+      console.error('Erro ao carregar itens locais:', error);
+      toast({ title: 'Erro ao carregar locais', variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  // Mutations
-  const createMutation = useMutation({
-    mutationFn: (data: Omit<ItemLocal, 'cd_item_local'>) =>
-      itemLocalApi.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/item-local'] });
-      toast({ title: 'Local criado com sucesso!' });
+  useEffect(() => {
+    loadItensLocal();
+  }, []);
+
+  const handleSubmit = async (data: Omit<ItemLocal, 'cd_item_local'>) => {
+    try {
+      if (editingItem) {
+        await itemLocalService.update(editingItem.cd_item_local, data);
+        toast({ title: 'Local atualizado com sucesso!' });
+      } else {
+        await itemLocalService.create(data);
+        toast({ title: 'Local criado com sucesso!' });
+      }
       setIsCreateModalOpen(false);
-      form.reset();
-    },
-    onError: () => {
-      toast({ title: 'Erro ao criar local', variant: 'destructive' });
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<ItemLocal> }) =>
-      itemLocalApi.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/item-local'] });
-      toast({ title: 'Local atualizado com sucesso!' });
       setEditingItem(null);
       form.reset();
-    },
-    onError: () => {
-      toast({ title: 'Erro ao atualizar local', variant: 'destructive' });
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) =>
-      itemLocalApi.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/item-local'] });
-      toast({ title: 'Local excluído com sucesso!' });
-    },
-    onError: () => {
-      toast({ title: 'Erro ao excluir local', variant: 'destructive' });
-    },
-  });
-
-  // Filtered data
-  const filteredLocais = itensLocal.filter(local =>
-    local.ds_item_local.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleSubmit = (data: Omit<ItemLocal, 'cd_item_local'>) => {
-    if (editingItem) {
-      updateMutation.mutate({ id: editingItem.cd_item_local, data });
-    } else {
-      createMutation.mutate(data);
+      loadItensLocal();
+    } catch (error) {
+      console.error('Erro ao salvar local:', error);
+      toast({ title: 'Erro ao salvar local', variant: 'destructive' });
     }
   };
 
@@ -94,9 +71,16 @@ export function ItemLocalPage() {
     setIsCreateModalOpen(true);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (confirm('Tem certeza que deseja excluir este local?')) {
-      deleteMutation.mutate(id);
+      try {
+        await itemLocalService.delete(id);
+        toast({ title: 'Local excluído com sucesso!' });
+        loadItensLocal();
+      } catch (error) {
+        console.error('Erro ao excluir local:', error);
+        toast({ title: 'Erro ao excluir local', variant: 'destructive' });
+      }
     }
   };
 
@@ -105,6 +89,11 @@ export function ItemLocalPage() {
     form.reset();
     setIsCreateModalOpen(true);
   };
+
+  // Filtered data
+  const filteredLocais = itensLocal.filter(local =>
+    local.ds_item_local.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (isLoading) {
     return <div className="flex justify-center p-8">Carregando...</div>;
@@ -177,16 +166,8 @@ export function ItemLocalPage() {
                   >
                     Cancelar
                   </MaterialButton>
-                  <MaterialButton
-                    type="submit"
-                    disabled={createMutation.isPending || updateMutation.isPending}
-                  >
-                    {createMutation.isPending || updateMutation.isPending
-                      ? 'Salvando...'
-                      : editingItem
-                      ? 'Atualizar'
-                      : 'Criar'
-                    }
+                  <MaterialButton type="submit">
+                    {editingItem ? 'Atualizar' : 'Criar'}
                   </MaterialButton>
                 </div>
               </form>

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+
+import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { MaterialCard } from '../components/ui/material-card';
 import { MaterialButton } from '../components/ui/material-button';
@@ -11,8 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
-import { queryClient } from '@/lib/queryClient';
-import { tipoLimpezaApi } from '../services/api';
+import { tipoLimpezaService } from '../services/tipoLimpezaService';
 import type { TipoLimpeza } from '../types';
 
 export function TipoLimpezaPage() {
@@ -20,6 +19,8 @@ export function TipoLimpezaPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<TipoLimpeza | null>(null);
+  const [tiposLimpeza, setTiposLimpeza] = useState<TipoLimpeza[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const form = useForm<Omit<TipoLimpeza, 'cd_tipo_limpeza'>>({
     defaultValues: {
@@ -29,63 +30,39 @@ export function TipoLimpezaPage() {
     },
   });
 
-  // Queries
-  const { data: tiposLimpeza = [], isLoading } = useQuery({
-    queryKey: ['/api/tipo-limpeza'],
-    queryFn: () => tipoLimpezaApi.getAll(),
-  });
+  const loadTiposLimpeza = async () => {
+    try {
+      setIsLoading(true);
+      const data = await tipoLimpezaService.getAll();
+      setTiposLimpeza(data);
+    } catch (error) {
+      console.error('Erro ao carregar tipos de limpeza:', error);
+      toast({ title: 'Erro ao carregar tipos de limpeza', variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  // Mutations
-  const createMutation = useMutation({
-    mutationFn: (data: Omit<TipoLimpeza, 'cd_tipo_limpeza'>) =>
-      tipoLimpezaApi.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tipo-limpeza'] });
-      toast({ title: 'Tipo de limpeza criado com sucesso!' });
+  useEffect(() => {
+    loadTiposLimpeza();
+  }, []);
+
+  const handleSubmit = async (data: Omit<TipoLimpeza, 'cd_tipo_limpeza'>) => {
+    try {
+      if (editingItem) {
+        await tipoLimpezaService.update(editingItem.cd_tipo_limpeza, data);
+        toast({ title: 'Tipo de limpeza atualizado com sucesso!' });
+      } else {
+        await tipoLimpezaService.create(data);
+        toast({ title: 'Tipo de limpeza criado com sucesso!' });
+      }
       setIsCreateModalOpen(false);
-      form.reset();
-    },
-    onError: () => {
-      toast({ title: 'Erro ao criar tipo de limpeza', variant: 'destructive' });
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<TipoLimpeza> }) =>
-      tipoLimpezaApi.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tipo-limpeza'] });
-      toast({ title: 'Tipo de limpeza atualizado com sucesso!' });
       setEditingItem(null);
       form.reset();
-    },
-    onError: () => {
-      toast({ title: 'Erro ao atualizar tipo de limpeza', variant: 'destructive' });
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) =>
-      tipoLimpezaApi.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tipo-limpeza'] });
-      toast({ title: 'Tipo de limpeza excluído com sucesso!' });
-    },
-    onError: () => {
-      toast({ title: 'Erro ao excluir tipo de limpeza', variant: 'destructive' });
-    },
-  });
-
-  // Filtered data
-  const filteredTipos = tiposLimpeza.filter(tipo =>
-    tipo.ds_tipo_limpeza.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleSubmit = (data: Omit<TipoLimpeza, 'cd_tipo_limpeza'>) => {
-    if (editingItem) {
-      updateMutation.mutate({ id: editingItem.cd_tipo_limpeza, data });
-    } else {
-      createMutation.mutate(data);
+      loadTiposLimpeza();
+    } catch (error) {
+      console.error('Erro ao salvar tipo de limpeza:', error);
+      toast({ title: 'Erro ao salvar tipo de limpeza', variant: 'destructive' });
     }
   };
 
@@ -95,9 +72,16 @@ export function TipoLimpezaPage() {
     setIsCreateModalOpen(true);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (confirm('Tem certeza que deseja excluir este tipo de limpeza?')) {
-      deleteMutation.mutate(id);
+      try {
+        await tipoLimpezaService.delete(id);
+        toast({ title: 'Tipo de limpeza excluído com sucesso!' });
+        loadTiposLimpeza();
+      } catch (error) {
+        console.error('Erro ao excluir tipo de limpeza:', error);
+        toast({ title: 'Erro ao excluir tipo de limpeza', variant: 'destructive' });
+      }
     }
   };
 
@@ -106,6 +90,11 @@ export function TipoLimpezaPage() {
     form.reset();
     setIsCreateModalOpen(true);
   };
+
+  // Filtered data
+  const filteredTipos = tiposLimpeza.filter(tipo =>
+    tipo.ds_tipo_limpeza.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (isLoading) {
     return <div className="flex justify-center p-8">Carregando...</div>;
@@ -197,16 +186,8 @@ export function TipoLimpezaPage() {
                   >
                     Cancelar
                   </MaterialButton>
-                  <MaterialButton
-                    type="submit"
-                    disabled={createMutation.isPending || updateMutation.isPending}
-                  >
-                    {createMutation.isPending || updateMutation.isPending
-                      ? 'Salvando...'
-                      : editingItem
-                      ? 'Atualizar'
-                      : 'Criar'
-                    }
+                  <MaterialButton type="submit">
+                    {editingItem ? 'Atualizar' : 'Criar'}
                   </MaterialButton>
                 </div>
               </form>
