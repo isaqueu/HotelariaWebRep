@@ -1,13 +1,19 @@
 // /src/types.ts
 
-export interface LoginInfo {
+export interface LoginRequest {
   username: string;
   password: string;
 }
 
 export interface RequestBody {
   message: string;
-  data: LoginInfo[];
+  data: LoginRequest[];
+}
+
+export interface LoginResponse {
+  access_token: string;
+  refresh_token: string;
+  user: UserProfile;
 }
 
 export interface UserProfile {

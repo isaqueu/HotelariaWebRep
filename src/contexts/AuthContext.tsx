@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { authService } from '../services/authService';
-import { getAuthToken, saveAuthToken, removeAuthToken } from '../lib/utils';
+import { getAuthToken, saveAuthToken, removeAuthToken, saveRefreshToken } from '../lib/utils';
 import type { UserProfile } from '../types';
 
 interface AuthContextType {
@@ -55,9 +55,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const response = await authService.login({ username, password });
 
-      if (response.token) {
-        saveAuthToken(response.token);
-        setToken(response.token);
+      if (response.access_token && response?.refresh_token) {
+        saveAuthToken(response.access_token);
+        saveRefreshToken(response.refresh_token)
+        setToken(response.access_token);
 
         // Busca o perfil do usuário após login
         const profile = await authService.getProfile();

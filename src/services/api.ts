@@ -38,4 +38,26 @@ api.interceptors.response.use(
   }
 );
 
+export const makeRequest = async ( endpoint: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE', data?: any,): Promise<any> => {
+  try {
+    //console.log(`Enviando requisição para ${endpoint} com dados:`, data);
+    const response = await api.request({
+      url: endpoint,
+      method,
+      data,
+    });
+
+    return response.data;
+  } catch (error: any) {
+    console.error(
+      `Erro ao fazer requisição para ${endpoint}:`,
+      error.response || error,
+    );
+    throw new Error(
+      error.response?.data?.message ||
+        `Erro ${error.response?.status || ''} ao acessar ${endpoint}`,
+    );
+  }
+};
+
 export default api;

@@ -1,20 +1,19 @@
 
 import api from './api';
-import type { UserProfile } from '../types';
+import type { LoginRequest, LoginResponse, RequestBody, UserProfile } from '../types';
+import { encryptKey } from '@/lib/utils';
 
-interface LoginRequest {
-  username: string;
-  password: string;
-}
 
-interface LoginResponse {
-  token: string;
-  user: UserProfile;
-}
+
 
 export const authService = {
   async login(credentials: LoginRequest): Promise<LoginResponse> {
-    const response = await api.post('/auth/login', credentials);
+
+    credentials.password = await encryptKey(credentials.password);
+
+    let requestBody: RequestBody = { message: '', data: [credentials] }
+
+    const response = await api.post('/auth/login', requestBody);
     return response.data;
   },
 
