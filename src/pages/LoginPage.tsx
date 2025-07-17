@@ -21,29 +21,42 @@ export function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
+    console.log('🔄 [LoginPage] Iniciando processo de login...');
+    console.log('📝 [LoginPage] Dados do formulário:', {
+      username: formData.username,
+      password: formData.password ? '***' : 'vazio'
+    });
+
     try {
+      console.log('🚀 [LoginPage] Chamando função login do AuthContext...');
       const success = await login(formData.username, formData.password);
       
+      console.log('✅ [LoginPage] Resultado do login:', success);
+      
       if (success) {
+        console.log('🎉 [LoginPage] Login bem-sucedido! Redirecionando para dashboard...');
         toast({
           title: 'Login realizado com sucesso',
           description: 'Bem-vindo ao HOTELARIA WEB',
         });
         navigate('/dashboard');
       } else {
+        console.log('❌ [LoginPage] Login falhou - credenciais inválidas');
         toast({
           title: 'Erro no login',
           description: 'Usuário ou senha inválidos',
           variant: 'destructive',
         });
       }
-    } catch {
+    } catch (error) {
+      console.error('💥 [LoginPage] Erro capturado durante login:', error);
       toast({
         title: 'Erro no login',
         description: 'Erro interno do servidor',
         variant: 'destructive',
       });
     } finally {
+      console.log('🏁 [LoginPage] Finalizando processo de login...');
       setIsLoading(false);
     }
   };

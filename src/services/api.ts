@@ -10,30 +10,85 @@ const api = axios.create({
   },
 });
 
-// Interceptor para adicionar o token de autenticação
+// Interceptor para adicionar token nas requisições
 api.interceptors.request.use(
   (config) => {
+    console.log('🔄 [API] Interceptando requisição...');
+    console.log('📝 [API] Detalhes da requisição:', {
+      method: config.method?.toUpperCase(),
+      url: config.url,
+      baseURL: config.baseURL
+    });
+
     const token = getAuthToken();
+    console.log('🔑 [API] Token encontrado:', token ? 'SIM' : 'NÃO');
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log('✅ [API] Token adicionado ao header Authorization');
     }
+
     return config;
   },
   (error) => {
+    console.error('💥 [API] Erro no interceptor de requisição:', error);
     return Promise.reject(error);
   }
 );
 
-// Interceptor para tratar respostas e erros
+// Interceptor para lidar com respostas e erros
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Token expirado ou inválido
-      const tokenKey = (import.meta as any).env?.VITE_TOKEN_STORAGE_KEY || 'hotelaria_auth_token';
-      localStorage.removeItem(tokenKey);
-      window.location.href = '/login';
+  (response) => {
+    console.log('✅ [API] Resposta recebida com sucesso:', {
+      status: response.status,
+      statusText: response.statusText,
+      url: response.config.url,
+      method: response.config.method?.toUpperCase()
+    });
+    return response;
+  },
+  async (error) => {
+    console.error('💥 [API] Erro na resposta:', {
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      url: error.config?.url,
+      method: error.config?.method?.toUpperCase(),
+      message: error.message
+    });
+
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      console.log('🔄 [API] Erro 401 detectado - tentando renovar token...');
+      originalRequest._retry = true;
+
+      try {
+        const refreshToken = getRefreshToken();
+        console.log('🔑 [API] Refresh token encontrado:', refreshToken ? 'SIM' : 'NÃO');
+
+        if (refreshToken) {
+          console.log('🚀 [API] Enviando requisição para renovar token...');
+          const response = await axios.post(`${(import.meta as any).env?.VITE_BACKEND_URL || 'http://localhost:3000'}/auth/refresh`, {
+            refresh_token: refreshToken
+          });
+
+          console.log('✅ [API] Token renovado com sucesso');
+          const { access_token } = response.data;
+          localStorage.setItem('hotelaria_auth_token', access_token)
+
+          console.log('🔄 [API] Reenviando requisição original com novo token...');
+          originalRequest.headers.Authorization = `Bearer ${access_token}`;
+          return api(originalRequest);
+        }
+      } catch (refreshError) {
+        console.error('💥 [API] Erro ao renovar token:', refreshError);
+        console.log('🧹 [API] Removendo tokens e redirecionando para login...');
+        localStorage.removeItem('hotelaria_auth_token');
+        localStorage.removeItem('hotelaria_refresh_token');
+        window.location.href = '/login';
+      }
     }
+
     return Promise.reject(error);
   }
 );

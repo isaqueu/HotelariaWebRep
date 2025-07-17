@@ -1,4 +1,3 @@
-
 import { makeRequest } from "@/services/api";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
@@ -55,5 +54,3 @@ export const encryptKey = async (key: string): Promise<string> => {
       throw new Error('Erro ao embaralhar a chave');
     }
   }
-
-

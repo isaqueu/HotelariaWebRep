@@ -28,22 +28,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Inicializa o contexto verificando se há token salvo
   useEffect(() => {
     const initializeAuth = async () => {
+      console.log('🔄 [AuthContext] Inicializando autenticação...');
+      
       try {
         const savedToken = getAuthToken();
+        console.log('🔑 [AuthContext] Token salvo encontrado:', savedToken ? 'SIM' : 'NÃO');
+        
         if (savedToken) {
+          console.log('✅ [AuthContext] Definindo token no estado...');
           setToken(savedToken);
 
+          console.log('👤 [AuthContext] Buscando perfil do usuário...');
           // Verifica se o token ainda é válido fazendo uma requisição para o perfil
           const profile = await authService.getProfile();
+          console.log('📋 [AuthContext] Perfil obtido:', profile);
           setUserProfile(profile);
+        } else {
+          console.log('⚠️ [AuthContext] Nenhum token salvo encontrado');
         }
       } catch (error) {
-        console.error('Erro ao inicializar autenticação:', error);
+        console.error('💥 [AuthContext] Erro ao inicializar autenticação:', error);
+        console.log('🧹 [AuthContext] Removendo token inválido...');
         // Remove token inválido
         removeAuthToken();
         setToken(null);
         setUserProfile(null);
       } finally {
+        console.log('🏁 [AuthContext] Inicialização concluída');
         setLoading(false);
       }
     };
@@ -52,31 +63,63 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const login = async (username: string, password: string): Promise<boolean> => {
+    console.log('🔄 [AuthContext] Iniciando login...');
+    console.log('📝 [AuthContext] Dados recebidos:', {
+      username,
+      password: password ? '***' : 'vazio'
+    });
+
     try {
+      console.log('🚀 [AuthContext] Chamando authService.login...');
       const response = await authService.login({ username, password });
+      
+      console.log('📨 [AuthContext] Resposta do authService:', {
+        access_token: response.access_token ? 'PRESENTE' : 'AUSENTE',
+        refresh_token: response.refresh_token ? 'PRESENTE' : 'AUSENTE',
+        user: response.user ? 'PRESENTE' : 'AUSENTE'
+      });
 
       if (response.access_token && response?.refresh_token) {
+        console.log('💾 [AuthContext] Salvando tokens...');
         saveAuthToken(response.access_token);
-        saveRefreshToken(response.refresh_token)
+        saveRefreshToken(response.refresh_token);
         setToken(response.access_token);
 
+        console.log('👤 [AuthContext] Buscando perfil do usuário após login...');
         // Busca o perfil do usuário após login
         const profile = await authService.getProfile();
+        console.log('📋 [AuthContext] Perfil obtido após login:', profile);
         setUserProfile(profile);
+        
+        console.log('✅ [AuthContext] Login concluído com sucesso!');
         return true;
       }
+      
+      console.log('❌ [AuthContext] Login falhou - tokens ausentes na resposta');
       return false;
     } catch (error) {
-      console.error('Erro no login:', error);
+      console.error('💥 [AuthContext] Erro no login:', error);
+      
+      // Log detalhado do erro
+      if (error instanceof Error) {
+        console.error('📝 [AuthContext] Mensagem do erro:', error.message);
+        console.error('📚 [AuthContext] Stack trace:', error.stack);
+      }
+      
       return false;
     }
   };
 
   const logout = () => {
+    console.log('🔄 [AuthContext] Iniciando logout...');
+    console.log('🧹 [AuthContext] Removendo token de autenticação...');
     removeAuthToken();
+    console.log('🔄 [AuthContext] Limpando estado do usuário...');
     setToken(null);
     setUserProfile(null);
+    console.log('🚀 [AuthContext] Redirecionando para login...');
     navigate('/login');
+    console.log('✅ [AuthContext] Logout concluído!');
   };
 
   const value = {
