@@ -93,7 +93,7 @@ const menuStructure: MenuGroup[] = [
         children: [
           {
             name: "Operadores",
-            path: "/operadores",
+            path: "/operador",
             icon: () => <EmojiIcon emoji="👨‍⚕️" />,
             color: "bg-purple-400",
           },
@@ -186,7 +186,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
    * - Mantém a hierarquia visível até o item ativo
    */
   useEffect(() => {
-    if (location.pathname && location.pathname !== "/dashboard") {
+    if (location.pathname && location.pathname !== "/") {
       const pathInfo = findGroupAndItemForPath(location.pathname);
       if (pathInfo) {
         const groupsToExpand = new Set<string>();
@@ -200,7 +200,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         setExpandedGroups(groupsToExpand);
       }
     } else {
-      // Se for dashboard, fecha todos os grupos
+      // Se for a página inicial (dashboard), fecha todos os grupos
       setExpandedGroups(new Set());
     }
   }, [location.pathname]);

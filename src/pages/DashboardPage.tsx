@@ -36,8 +36,8 @@ const statsCards = [
 
 const quickActions = [
   { name: 'Nova Categoria', path: '/categoria-chamado' },
-  { name: 'Novo Dispositivo', path: '/dispositivos' },
-  { name: 'Novo Operador', path: '/operadores' },
+  { name: 'Novo Dispositivo', path: '/dispositivo' },
+  { name: 'Novo Operador', path: '/operador' },
 ];
 
 export function DashboardPage() {
@@ -74,7 +74,7 @@ export function DashboardPage() {
         <h2 className="text-xl font-medium text-gray-800 mb-4">Ações Rápidas</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {quickActions.map((action, index) => (
-            <Link key={index} href={action.path}>
+            <Link key={index} to={action.path}>
               <MaterialButton
                 variant="outline"
                 className="w-full justify-start"
