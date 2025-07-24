@@ -87,7 +87,7 @@ export function TipoAcessoPage() {
   };
 
   // Filtered data
-  const filteredTipos = (Array.isArray(tiposAcesso) && tiposAcesso.length > 0) ? tiposAcesso.filter(tipo =>
+  const filteredTiposAcesso = (Array.isArray(tiposAcesso) && tiposAcesso.length > 0) ? tiposAcesso.filter(tipo =>
     tipo?.ds_tipo_acesso?.toLowerCase().includes(searchQuery.toLowerCase())
   ) : [];
 
@@ -157,47 +157,57 @@ export function TipoAcessoPage() {
       </div>
 
       {/* Search */}
-      <MaterialCard className="p-6">
-        <FloatingLabelInput
-          label="Buscar tipo de acesso..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          icon={<Search className="h-5 w-5" />}
-        />
+      <MaterialCard className="p-6 bg-gradient-to-r from-blue-50 to-blue-100/50 border-2 border-blue-200 shadow-sm">
+        <div className="border border-blue-200/60 rounded-lg p-4 bg-white/50">
+          <FloatingLabelInput
+            label="Buscar tipo de acesso..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            icon={<Search className="h-5 w-5" />}
+          />
+        </div>
       </MaterialCard>
 
       {/* Data Table */}
-      <MaterialCard className="overflow-hidden">
+      <MaterialCard className="overflow-hidden border-2 border-blue-200 shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-gradient-to-r from-blue-50 to-blue-100/50 border-b-2 border-blue-200">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider border-r border-blue-200/40">
                   Código
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider border-r border-blue-200/40">
                   Descrição
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider border-r border-blue-200/40">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">
                   Ações
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredTipos.length === 0 ? (
+            <tbody className="bg-white divide-y divide-blue-200/40">
+              {filteredTiposAcesso.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="px-6 py-8 text-center text-gray-500">
+                  <td colSpan={4} className="px-6 py-8 text-center text-gray-500 border-b border-blue-200/20">
                     Nenhum tipo de acesso encontrado
                   </td>
                 </tr>
               ) : (
-                filteredTipos.map((tipo) => (
-                  <tr key={tipo.cd_tipo_acesso} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                filteredTiposAcesso.map((tipo) => (
+                  <tr key={tipo.cd_tipo_acesso} className="hover:bg-blue-50/30 border-b border-blue-200/20">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-r border-blue-200/20">
                       {tipo.cd_tipo_acesso}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-blue-200/20">
                       {tipo.ds_tipo_acesso}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap border-r border-blue-200/20">
+                      <Badge variant={tipo.sn_ativo === 'S' ? 'default' : 'secondary'}>
+                        {tipo.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
+                      </Badge>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                       <MaterialButton
@@ -205,7 +215,7 @@ export function TipoAcessoPage() {
                         size="sm"
                         elevated={false}
                         onClick={() => handleEdit(tipo)}
-                        className="p-2"
+                        className="p-2 border border-blue-300"
                       >
                         <Edit className="h-4 w-4" />
                       </MaterialButton>
@@ -214,7 +224,7 @@ export function TipoAcessoPage() {
                         size="sm"
                         elevated={false}
                         onClick={() => handleDelete(tipo.cd_tipo_acesso)}
-                        className="p-2"
+                        className="p-2 border border-red-300"
                       >
                         <Trash2 className="h-4 w-4" />
                       </MaterialButton>
@@ -229,3 +239,4 @@ export function TipoAcessoPage() {
     </div>
   );
 }
+`

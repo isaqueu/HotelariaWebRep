@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { MaterialCard } from '../components/ui/material-card';
@@ -112,7 +111,7 @@ export function OperadorPage() {
           <h1 className="text-3xl font-medium text-gray-800 mb-2">Operadores</h1>
           <p className="text-gray-600">Gerencie os operadores que lidam com as etapas dos chamados</p>
         </div>
-        
+
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
             <MaterialButton onClick={openCreateModal} className="flex items-center">
@@ -120,14 +119,14 @@ export function OperadorPage() {
               Novo Operador
             </MaterialButton>
           </DialogTrigger>
-          
+
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
                 {editingItem ? 'Editar Operador' : 'Novo Operador'}
               </DialogTitle>
             </DialogHeader>
-            
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                 <FormField
@@ -236,72 +235,74 @@ export function OperadorPage() {
       </div>
 
       {/* Search */}
-      <MaterialCard className="p-6">
-        <FloatingLabelInput
-          label="Buscar operador..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          icon={<Search className="h-5 w-5" />}
-        />
+      <MaterialCard className="p-6 bg-gradient-to-r from-blue-50 to-blue-100/50 border-2 border-blue-200 shadow-sm">
+        <div className="border border-blue-200/60 rounded-lg p-4 bg-white/50">
+          <FloatingLabelInput
+            label="Buscar operador..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            icon={<Search className="h-5 w-5" />}
+          />
+        </div>
       </MaterialCard>
 
       {/* Data Table */}
-      <MaterialCard className="overflow-hidden">
+      <MaterialCard className="overflow-hidden border-2 border-blue-200 shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-gradient-to-r from-blue-50 to-blue-100/50 border-b-2 border-blue-200">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider border-r border-blue-200/40">
                   Código
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider border-r border-blue-200/40">
                   Nome
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider border-r border-blue-200/40">
                   Usuário SW
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider border-r border-blue-200/40">
                   Empresa
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider border-r border-blue-200/40">
                   Status
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">
                   Logado
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">
                   Ações
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-blue-200/40">
               {filteredOperadores.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                  <td colSpan={7} className="px-6 py-8 text-center text-gray-500 border-b border-blue-200/20">
                     Nenhum operador encontrado
                   </td>
                 </tr>
               ) : (
                 filteredOperadores.map((operador) => (
-                  <tr key={operador.cd_operador} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <tr key={operador.cd_operador} className="hover:bg-blue-50/30 border-b border-blue-200/20">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-r border-blue-200/20">
                       {operador.cd_operador}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-blue-200/20">
                       {operador.nm_operador}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-blue-200/20">
                       {operador.cd_usuario_sw}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-blue-200/20">
                       {operador.cod_empresa}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 whitespace-nowrap border-r border-blue-200/20">
                       <Badge variant={operador.sn_ativo === 'S' ? 'default' : 'secondary'}>
                         {operador.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
                       </Badge>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 whitespace-nowrap border-r border-blue-200/20">
                       <Badge variant={operador.sn_logado === 'S' ? 'default' : 'secondary'}>
                         {operador.sn_logado === 'S' ? 'Sim' : 'Não'}
                       </Badge>
@@ -312,7 +313,7 @@ export function OperadorPage() {
                         size="sm"
                         elevated={false}
                         onClick={() => handleEdit(operador)}
-                        className="p-2"
+                        className="p-2 border border-blue-300"
                       >
                         <Edit className="h-4 w-4" />
                       </MaterialButton>
@@ -321,7 +322,7 @@ export function OperadorPage() {
                         size="sm"
                         elevated={false}
                         onClick={() => handleDelete(operador.cd_operador)}
-                        className="p-2"
+                        className="p-2 border border-red-300"
                       >
                         <Trash2 className="h-4 w-4" />
                       </MaterialButton>

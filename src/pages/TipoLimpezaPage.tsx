@@ -259,7 +259,7 @@ export function TipoLimpezaPage() {
                         size="sm"
                         elevated={false}
                         onClick={() => handleEdit(tipo)}
-                        className="p-2"
+                        className="p-2 border border-blue-300"
                       >
                         <Edit className="h-4 w-4" />
                       </MaterialButton>
@@ -268,7 +268,7 @@ export function TipoLimpezaPage() {
                         size="sm"
                         elevated={false}
                         onClick={() => handleDelete(tipo.cd_tipo_limpeza)}
-                        className="p-2"
+                        className="p-2 border border-red-300"
                       >
                         <Trash2 className="h-4 w-4" />
                       </MaterialButton>

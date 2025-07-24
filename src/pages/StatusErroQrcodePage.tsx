@@ -216,87 +216,86 @@ export function StatusErroQrcodePage() {
       </div>
 
       {/* Search */}
-      <MaterialCard className="p-6">
-        <FloatingLabelInput
-          label="Buscar status..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          icon={<Search className="h-5 w-5" />}
-        />
+      <MaterialCard className="p-6 bg-gradient-to-r from-blue-50 to-blue-100/50 border-2 border-blue-200 shadow-sm">
+        <div className="border border-blue-200/60 rounded-lg p-4 bg-white/50">
+          <FloatingLabelInput
+            label="Buscar status erro QRCode..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            icon={<Search className="h-5 w-5" />}
+          />
+        </div>
       </MaterialCard>
 
       {/* Data Table */}
-      <MaterialCard className="overflow-hidden">
+      <MaterialCard className="overflow-hidden border-2 border-blue-200 shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-gradient-to-r from-blue-50 to-blue-100/50 border-b-2 border-blue-200">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider border-r border-blue-200/40">
                   Código
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider border-r border-blue-200/40">
                   Descrição
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider border-r border-blue-200/40">
                   Categoria
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider border-r border-blue-200/40">
                   Status
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">
                   Ações
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-blue-200/40">
               {filteredStatus.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
-                    Nenhum status encontrado
+                  <td colSpan={5} className="px-6 py-8 text-center text-gray-500 border-b border-blue-200/20">
+                    Nenhum status erro QRCode encontrado
                   </td>
                 </tr>
               ) : (
-                filteredStatus.map((status) => {
-                  const categoria = categorias.find(c => c.cd_categoria_chamado === status.cd_categoria_chamado);
-                  return (
-                    <tr key={status.cd_status_erro_qrcode} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {status.cd_status_erro_qrcode}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {status.ds_status_erro_qrcode}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {categoria?.ds_categoria_chamado || 'N/A'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <Badge variant={status.sn_ativo === 'S' ? 'default' : 'secondary'}>
-                          {status.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
-                        </Badge>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <MaterialButton
-                          variant="outline"
-                          size="sm"
-                          elevated={false}
-                          onClick={() => handleEdit(status)}
-                          className="p-2"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </MaterialButton>
-                        <MaterialButton
-                          variant="destructive"
-                          size="sm"
-                          elevated={false}
-                          onClick={() => handleDelete(status.cd_status_erro_qrcode)}
-                          className="p-2"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </MaterialButton>
-                      </td>
-                    </tr>
-                  );
-                })
+                filteredStatus.map((status) => (
+                  <tr key={status.cd_status_erro_qrcode} className="hover:bg-blue-50/30 border-b border-blue-200/20">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-r border-blue-200/20">
+                      {status.cd_status_erro_qrcode}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-blue-200/20">
+                      {status.ds_status_erro_qrcode}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-blue-200/20">
+                      {categoria?.ds_categoria_chamado || 'N/A'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap border-r border-blue-200/20">
+                      <Badge variant={status.sn_ativo === 'S' ? 'default' : 'secondary'}>
+                        {status.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
+                      </Badge>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                      <MaterialButton
+                        variant="outline"
+                        size="sm"
+                        elevated={false}
+                        onClick={() => handleEdit(status)}
+                        className="p-2 border border-blue-300"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </MaterialButton>
+                      <MaterialButton
+                        variant="destructive"
+                        size="sm"
+                        elevated={false}
+                        onClick={() => handleDelete(status.cd_status_erro_qrcode)}
+                        className="p-2 border border-red-300"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </MaterialButton>
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>

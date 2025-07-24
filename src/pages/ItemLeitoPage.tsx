@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { MaterialCard } from '../components/ui/material-card';
@@ -252,69 +251,55 @@ export function ItemLeitoPage() {
       </div>
 
       {/* Search */}
-      <MaterialCard className="p-6">
-        <FloatingLabelInput
-          label="Buscar item do leito..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          icon={<Search className="h-5 w-5" />}
-        />
+      <MaterialCard className="p-6 bg-gradient-to-r from-blue-50 to-blue-100/50 border-2 border-blue-200 shadow-sm">
+        <div className="border border-blue-200/60 rounded-lg p-4 bg-white/50">
+          <FloatingLabelInput
+            label="Buscar item do leito..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            icon={<Search className="h-5 w-5" />}
+          />
+        </div>
       </MaterialCard>
 
       {/* Data Table */}
-      <MaterialCard className="overflow-hidden">
+      <MaterialCard className="overflow-hidden border-2 border-blue-200 shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-gradient-to-r from-blue-50 to-blue-100/50 border-b-2 border-blue-200">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider border-r border-blue-200/40">
                   Código
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider border-r border-blue-200/40">
                   Descrição
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider border-r border-blue-200/40">
                   Item Local
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">
                   Ações
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-blue-200/40">
               {filteredItens.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                  <td colSpan={4} className="px-6 py-8 text-center text-gray-500 border-b border-blue-200/20">
                     Nenhum item do leito encontrado
                   </td>
                 </tr>
               ) : (
                 filteredItens.map((item) => (
-                  <tr key={item.cd_item_leito} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <tr key={item.cd_item_leito} className="hover:bg-blue-50/30 border-b border-blue-200/20">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-r border-blue-200/20">
                       {item.cd_item_leito}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-blue-200/20">
                       {item.ds_item_leito}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-blue-200/20">
                       {getItemLocalName(item.cd_item_local)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="space-y-1">
-                        <Badge variant={item.sn_ativo === 'S' ? 'default' : 'secondary'}>
-                          {item.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
-                        </Badge>
-                        <Badge variant={item.sn_item_coletivo_enfermaria === 'S' ? 'default' : 'secondary'}>
-                          {item.sn_item_coletivo_enfermaria === 'S' ? 'Coletivo Enfermaria' : 'Individual'}
-                        </Badge>
-                        <Badge variant={item.sn_item_checklist === 'S' ? 'default' : 'secondary'}>
-                          {item.sn_item_checklist === 'S' ? 'Item Checklist' : 'Não é Checklist'}
-                        </Badge>
-                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                       <MaterialButton
@@ -322,7 +307,7 @@ export function ItemLeitoPage() {
                         size="sm"
                         elevated={false}
                         onClick={() => handleEdit(item)}
-                        className="p-2"
+                        className="p-2 border border-blue-300"
                       >
                         <Edit className="h-4 w-4" />
                       </MaterialButton>
@@ -331,7 +316,7 @@ export function ItemLeitoPage() {
                         size="sm"
                         elevated={false}
                         onClick={() => handleDelete(item.cd_item_leito)}
-                        className="p-2"
+                        className="p-2 border border-red-300"
                       >
                         <Trash2 className="h-4 w-4" />
                       </MaterialButton>
