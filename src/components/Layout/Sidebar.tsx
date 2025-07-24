@@ -370,7 +370,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               if (group.items.length === 0) {
                 const isActive = location.pathname === "/dashboard";
                 return (
-                  <Link key={group.name} to="/dashboard">
+                  <Link key={group.name} to="/">
                     <div
                       className={cn(
                         "flex items-center px-4 py-3 rounded-xl transition-all duration-300 group cursor-pointer",
