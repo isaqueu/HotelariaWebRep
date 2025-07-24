@@ -34,10 +34,11 @@ export function CategoriaChamadoPage() {
     try {
       setIsLoading(true);
       const data = await categoriaChamadoService.getAll();
-      setCategorias(data);
+      setCategorias(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erro ao carregar categorias:', error);
       toast({ title: 'Erro ao carregar categorias', variant: 'destructive' });
+      setCategorias([]);
     } finally {
       setIsLoading(false);
     }
@@ -91,9 +92,9 @@ export function CategoriaChamadoPage() {
     setIsCreateModalOpen(true);
   };
 
-  const filteredCategorias = categorias.filter(categoria =>
+  const filteredCategorias = Array.isArray(categorias) ? categorias.filter(categoria =>
     categoria.ds_categoria_chamado.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ) : [];
 
   if (isLoading) {
     return <div className="flex justify-center p-8">Carregando...</div>;
