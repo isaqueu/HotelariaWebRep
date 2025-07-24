@@ -93,11 +93,11 @@ export function DispositivoPage() {
     setIsCreateModalOpen(true);
   };
 
-  const filteredDispositivos = dispositivos.filter(dispositivo =>
+  const filteredDispositivos = Array.isArray(dispositivos) ? dispositivos.filter(dispositivo =>
     dispositivo.ds_dispositivo.toLowerCase().includes(searchQuery.toLowerCase()) ||
     dispositivo.ds_marca.toLowerCase().includes(searchQuery.toLowerCase()) ||
     dispositivo.ds_modelo.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ): [];
 
   if (isLoading) {
     return <div className="flex justify-center p-8">Carregando...</div>;

@@ -44,14 +44,14 @@ const menuStructure: MenuGroup[] = [
     color: "bg-emerald-500",
     items: [
       {
-        name: "Categorias de Chamado",
+        name: "Categorias",
         path: "/categoria-chamado",
         icon: () => <EmojiIcon emoji="🏷️" />,
         color: "bg-emerald-400",
       },
       {
         name: "Dispositivos",
-        path: "/dispositivos",
+        path: "/dispositivo",
         icon: () => <EmojiIcon emoji="📱" />,
         color: "bg-emerald-400",
       },
