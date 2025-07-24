@@ -5,11 +5,11 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 interface TopNavigationProps {
-  onMenuClick: () => void;
+  onMenuToggle: () => void;
 }
 
-export function TopNavigation({ onMenuClick }: TopNavigationProps) {
-  const { user, logout } = useAuth();
+export function TopNavigation({ onMenuToggle }: TopNavigationProps) {
+  const { userProfile, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -18,34 +18,37 @@ export function TopNavigation({ onMenuClick }: TopNavigationProps) {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+    <header className="bg-gradient-to-b from-blue-800 to-blue-600 border-b border-blue-700 px-4 py-3 flex items-center justify-between shadow-lg">
       <div className="flex items-center space-x-4">
         <MaterialButton
           variant="ghost"
           size="sm"
-          onClick={onMenuClick}
-          className="md:hidden"
+          onClick={onMenuToggle}
+          className="md:hidden text-white hover:bg-blue-700"
         >
           <Menu className="h-5 w-5" />
         </MaterialButton>
         
         <div className="flex items-center space-x-2">
-          <Hospital className="h-6 w-6 text-primary" />
-          <h1 className="text-xl font-semibold text-gray-800">HOTELARIA WEB</h1>
+          <Hospital className="h-6 w-6 text-white" />
+          <h1 className="text-xl font-semibold text-white hidden sm:block">HOTELARIA WEB</h1>
+          <h1 className="text-lg font-semibold text-white sm:hidden">HOTELARIA</h1>
         </div>
       </div>
 
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-2 sm:space-x-4">
         <div className="flex items-center space-x-2">
-          <User className="h-5 w-5 text-gray-600" />
-          <span className="text-sm text-gray-700">{user?.name || 'Usuário'}</span>
+          <User className="h-5 w-5 text-white" />
+          <span className="text-sm text-white hidden sm:inline">
+            {userProfile?.nome || userProfile?.username || 'Usuário'}
+          </span>
         </div>
         
         <MaterialButton
           variant="ghost"
           size="sm"
           onClick={handleLogout}
-          className="text-gray-600 hover:text-red-600"
+          className="text-white hover:text-red-300 hover:bg-blue-700"
         >
           <LogOut className="h-4 w-4" />
         </MaterialButton>

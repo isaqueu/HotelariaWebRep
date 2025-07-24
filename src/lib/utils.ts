@@ -18,9 +18,14 @@ export const saveAuthToken = (authToken: string) => {
   localStorage.setItem(tokenKey, authToken);
 };
 
-export const removeAuthToken = () => {
+export const removeAuthToken = (): void => {
   const tokenKey = (import.meta as any).env?.VITE_TOKEN_STORAGE_KEY || 'hotelaria_auth_token';
   localStorage.removeItem(tokenKey);
+};
+
+export const removeRefreshToken = (): void => {
+  const refreshTokenKey = 'refreshToken';
+  localStorage.removeItem(refreshTokenKey);
 };
 
 export const saveRefreshToken = (refreshToken: string) => {

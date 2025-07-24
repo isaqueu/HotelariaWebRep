@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { authService } from '../services/authService';
-import { getAuthToken, saveAuthToken, removeAuthToken, saveRefreshToken } from '../lib/utils';
+import { getAuthToken, saveAuthToken, removeAuthToken, saveRefreshToken, removeRefreshToken } from '../lib/utils';
 import type { UserProfile } from '../types';
 
 interface AuthContextType {
@@ -111,8 +111,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const logout = () => {
     console.log('🔄 [AuthContext] Iniciando logout...');
-    console.log('🧹 [AuthContext] Removendo token de autenticação...');
+    console.log('🧹 [AuthContext] Removendo tokens de autenticação...');
     removeAuthToken();
+    removeRefreshToken();
     console.log('🔄 [AuthContext] Limpando estado do usuário...');
     setToken(null);
     setUserProfile(null);
