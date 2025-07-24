@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { MaterialCard } from '../components/ui/material-card';
@@ -34,7 +33,7 @@ export function TipoLimpezaPage() {
     try {
       setIsLoading(true);
       const data = await tipoLimpezaService.getAll();
-      setTiposLimpeza(Array.isArray(data) && data.length >= 0 ? data : []);
+      setTiposLimpeza(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erro ao carregar tipos de limpeza:', error);
       toast({ title: 'Erro ao carregar tipos de limpeza', variant: 'destructive' });
@@ -109,7 +108,7 @@ export function TipoLimpezaPage() {
           <h1 className="text-3xl font-medium text-gray-800 mb-2">Tipos de Limpeza</h1>
           <p className="text-gray-600">Gerencie os tipos de limpeza disponíveis no sistema</p>
         </div>
-        
+
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
             <MaterialButton onClick={openCreateModal} className="flex items-center">
@@ -117,14 +116,14 @@ export function TipoLimpezaPage() {
               Novo Tipo
             </MaterialButton>
           </DialogTrigger>
-          
+
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
                 {editingItem ? 'Editar Tipo de Limpeza' : 'Novo Tipo de Limpeza'}
               </DialogTitle>
             </DialogHeader>
-            
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                 <FormField

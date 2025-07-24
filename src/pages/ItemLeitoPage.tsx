@@ -41,8 +41,8 @@ export function ItemLeitoPage() {
         itemLeitoService.getAll(),
         itemLocalService.getAll(),
       ]);
-      setItensLeito(Array.isArray(itensLeitoData) && itensLeitoData.length >= 0 ? itensLeitoData : []);
-      setItensLocal(Array.isArray(itensLocalData) && itensLocalData.length >= 0 ? itensLocalData : []);
+      setItensLeito(Array.isArray(itensLeitoData) ? itensLeitoData : []);
+      setItensLocal(Array.isArray(itensLocalData) ? itensLocalData : []);
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
       toast({ title: 'Erro ao carregar dados', variant: 'destructive' });

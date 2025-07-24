@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { MaterialCard } from '../components/ui/material-card';
@@ -40,7 +39,7 @@ export function StatusErroQrcodePage() {
         statusErroQrcodeService.getAll(),
         categoriaChamadoService.getAll(),
       ]);
-      setStatusErros(Array.isArray(statusErrosData) && statusErrosData.length >= 0 ? statusErrosData : []);
+      setStatusErros(Array.isArray(statusErrosData) ? statusErrosData : []);
       setCategorias(Array.isArray(categoriasData) && categoriasData.length >= 0 ? categoriasData : []);
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
@@ -117,7 +116,7 @@ export function StatusErroQrcodePage() {
           <h1 className="text-3xl font-medium text-gray-800 mb-2">Status Erro QRCode</h1>
           <p className="text-gray-600">Gerencie os possíveis status quando ocorrem erros na leitura de QRCode</p>
         </div>
-        
+
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
             <MaterialButton onClick={openCreateModal} className="flex items-center">
@@ -125,14 +124,14 @@ export function StatusErroQrcodePage() {
               Novo Status
             </MaterialButton>
           </DialogTrigger>
-          
+
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
                 {editingItem ? 'Editar Status Erro QRCode' : 'Novo Status Erro QRCode'}
               </DialogTitle>
             </DialogHeader>
-            
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                 <FormField

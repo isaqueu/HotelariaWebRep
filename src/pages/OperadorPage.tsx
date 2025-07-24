@@ -36,7 +36,7 @@ export function OperadorPage() {
     try {
       setIsLoading(true);
       const data = await operadorService.getAll();
-      setOperadores(Array.isArray(data) && data.length >= 0 ? data : []);
+      setOperadores(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erro ao carregar operadores:', error);
       toast({ title: 'Erro ao carregar operadores', variant: 'destructive' });

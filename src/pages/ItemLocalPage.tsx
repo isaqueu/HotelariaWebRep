@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { MaterialCard } from '../components/ui/material-card';
@@ -33,7 +32,7 @@ export function ItemLocalPage() {
     try {
       setIsLoading(true);
       const data = await itemLocalService.getAll();
-      setItensLocal(Array.isArray(data) && data.length >= 0 ? data : []);
+      setItensLocal(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erro ao carregar itens locais:', error);
       toast({ title: 'Erro ao carregar locais', variant: 'destructive' });

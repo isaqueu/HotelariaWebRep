@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { MaterialCard } from '../components/ui/material-card';
@@ -29,7 +28,7 @@ export function TipoOperadorPage() {
     try {
       setIsLoading(true);
       const data = await tipoOperadorService.getAll();
-      setTiposOperador(Array.isArray(data) && data.length >= 0 ? data : []);
+      setTiposOperador(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erro ao carregar tipos de operador:', error);
       toast({ title: 'Erro ao carregar tipos de operador', variant: 'destructive' });
@@ -104,7 +103,7 @@ export function TipoOperadorPage() {
           <h1 className="text-3xl font-medium text-gray-800 mb-2">Tipos de Operador</h1>
           <p className="text-gray-600">Gerencie os tipos de usuários envolvidos no tratamento dos chamados</p>
         </div>
-        
+
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
             <MaterialButton onClick={openCreateModal} className="flex items-center">
@@ -112,14 +111,14 @@ export function TipoOperadorPage() {
               Novo Tipo
             </MaterialButton>
           </DialogTrigger>
-          
+
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
                 {editingItem ? 'Editar Tipo de Operador' : 'Novo Tipo de Operador'}
               </DialogTitle>
             </DialogHeader>
-            
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                 <FormField
