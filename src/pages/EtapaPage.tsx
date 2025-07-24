@@ -45,9 +45,9 @@ export function EtapaPage() {
         categoriaChamadoService.getAll(),
         tipoOperadorService.getAll(),
       ]);
-      setEtapas(Array.isArray(etapasData) ? etapasData : []);
-      setCategorias(Array.isArray(categoriasData) ? categoriasData : []);
-      setTiposOperador(Array.isArray(tiposOperadorData) ? tiposOperadorData : []);
+      setEtapas(Array.isArray(etapasData) && etapasData.length >= 0 ? etapasData : []);
+      setCategorias(Array.isArray(categoriasData) && categoriasData.length >= 0 ? categoriasData : []);
+      setTiposOperador(Array.isArray(tiposOperadorData) && tiposOperadorData.length >= 0 ? tiposOperadorData : []);
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
       toast({ title: 'Erro ao carregar dados', variant: 'destructive' });
@@ -107,8 +107,8 @@ export function EtapaPage() {
     setIsCreateModalOpen(true);
   };
 
-  const filteredEtapas = Array.isArray(etapas) ? etapas.filter(etapa =>
-    etapa.ds_etapa.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredEtapas = (Array.isArray(etapas) && etapas.length > 0) ? etapas.filter(etapa =>
+    etapa?.ds_etapa?.toLowerCase().includes(searchQuery.toLowerCase())
   ) : [];
 
   const getCategoriaName = (id: number) => {

@@ -40,8 +40,8 @@ export function StatusErroQrcodePage() {
         statusErroQrcodeService.getAll(),
         categoriaChamadoService.getAll(),
       ]);
-      setStatusErros(Array.isArray(statusErrosData) ? statusErrosData : []);
-      setCategorias(Array.isArray(categoriasData) ? categoriasData : []);
+      setStatusErros(Array.isArray(statusErrosData) && statusErrosData.length >= 0 ? statusErrosData : []);
+      setCategorias(Array.isArray(categoriasData) && categoriasData.length >= 0 ? categoriasData : []);
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
       toast({ title: 'Erro ao carregar dados', variant: 'destructive' });
@@ -101,8 +101,8 @@ export function StatusErroQrcodePage() {
   };
 
   // Filtered data
-  const filteredStatus = Array.isArray(statusErros) ? statusErros.filter(status =>
-    status.ds_status_erro_qrcode.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredStatus = (Array.isArray(statusErros) && statusErros.length > 0) ? statusErros.filter(status =>
+    status?.ds_status_erro_qrcode?.toLowerCase().includes(searchQuery.toLowerCase())
   ) : [];
 
   if (isLoading) {

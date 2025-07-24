@@ -33,7 +33,7 @@ export function ItemLocalPage() {
     try {
       setIsLoading(true);
       const data = await itemLocalService.getAll();
-      setItensLocal(Array.isArray(data) ? data : []);
+      setItensLocal(Array.isArray(data) && data.length >= 0 ? data : []);
     } catch (error) {
       console.error('Erro ao carregar itens locais:', error);
       toast({ title: 'Erro ao carregar locais', variant: 'destructive' });
@@ -92,8 +92,8 @@ export function ItemLocalPage() {
   };
 
   // Filtered data
-  const filteredLocais = Array.isArray(itensLocal) ? itensLocal.filter(local =>
-    local.ds_item_local.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredLocais = (Array.isArray(itensLocal) && itensLocal.length > 0) ? itensLocal.filter(local =>
+    local?.ds_item_local?.toLowerCase().includes(searchQuery.toLowerCase())
   ) : [];
 
   if (isLoading) {

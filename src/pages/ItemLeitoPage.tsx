@@ -41,8 +41,8 @@ export function ItemLeitoPage() {
         itemLeitoService.getAll(),
         itemLocalService.getAll(),
       ]);
-      setItensLeito(Array.isArray(itensLeitoData) ? itensLeitoData : []);
-      setItensLocal(Array.isArray(itensLocalData) ? itensLocalData : []);
+      setItensLeito(Array.isArray(itensLeitoData) && itensLeitoData.length >= 0 ? itensLeitoData : []);
+      setItensLocal(Array.isArray(itensLocalData) && itensLocalData.length >= 0 ? itensLocalData : []);
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
       toast({ title: 'Erro ao carregar dados', variant: 'destructive' });
@@ -101,8 +101,8 @@ export function ItemLeitoPage() {
     setIsCreateModalOpen(true);
   };
 
-  const filteredItens = Array.isArray(itensLeito) ? itensLeito.filter(item =>
-    item.ds_item_leito.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredItens = (Array.isArray(itensLeito) && itensLeito.length > 0) ? itensLeito.filter(item =>
+    item?.ds_item_leito?.toLowerCase().includes(searchQuery.toLowerCase())
   ) : [];
 
   const getItemLocalName = (id: number) => {

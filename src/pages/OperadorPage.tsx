@@ -36,7 +36,7 @@ export function OperadorPage() {
     try {
       setIsLoading(true);
       const data = await operadorService.getAll();
-      setOperadores(Array.isArray(data) ? data : []);
+      setOperadores(Array.isArray(data) && data.length >= 0 ? data : []);
     } catch (error) {
       console.error('Erro ao carregar operadores:', error);
       toast({ title: 'Erro ao carregar operadores', variant: 'destructive' });
@@ -95,9 +95,9 @@ export function OperadorPage() {
   };
 
   // Filtered data
-  const filteredOperadores = Array.isArray(operadores) ? operadores.filter(operador =>
-    operador.nm_operador.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    operador.cd_usuario_sw.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredOperadores = (Array.isArray(operadores) && operadores.length > 0) ? operadores.filter(operador =>
+    operador?.nm_operador?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    operador?.cd_usuario_sw?.toLowerCase().includes(searchQuery.toLowerCase())
   ) : [];
 
   if (isLoading) {
