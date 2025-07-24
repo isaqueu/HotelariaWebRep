@@ -177,7 +177,7 @@ export function CategoriaChamadoPage() {
       </div>
 
       {/* Search */}
-      <MaterialCard className="p-6">
+      <MaterialCard className="p-6 bg-gradient-to-r from-blue-50 to-blue-100/50 border-blue-200">
         <FloatingLabelInput
           label="Buscar categoria de chamado..."
           value={searchQuery}
@@ -190,18 +190,18 @@ export function CategoriaChamadoPage() {
       <MaterialCard className="overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-gradient-to-r from-blue-50 to-blue-100/50 border-b border-blue-200">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">
                   Código
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">
                   Descrição
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">
                   Ações
                 </th>
               </tr>
