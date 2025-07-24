@@ -1,8 +1,9 @@
 // /src/types.ts
 
 export interface LoginRequest {
-  username: string;
-  password: string;
+  USERNAME: string;
+  EMAIL: string;
+  PASSWORD: string;
 }
 
 export interface RequestBody {

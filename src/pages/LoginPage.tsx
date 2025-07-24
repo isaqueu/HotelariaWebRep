@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { loginContexto } = useAuth();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     username: '',
@@ -22,16 +22,9 @@ export function LoginPage() {
     setIsLoading(true);
 
     console.log('🔄 [LoginPage] Iniciando processo de login...');
-    console.log('📝 [LoginPage] Dados do formulário:', {
-      username: formData.username,
-      password: formData.password ? '***' : 'vazio'
-    });
 
     try {
-      console.log('🚀 [LoginPage] Chamando função login do AuthContext...');
-      const success = await login(formData.username, formData.password);
-      
-      console.log('✅ [LoginPage] Resultado do login:', success);
+      const success = await loginContexto(formData.username, formData.password);
       
       if (success) {
         console.log('🎉 [LoginPage] Login bem-sucedido! Redirecionando para dashboard...');
@@ -41,7 +34,6 @@ export function LoginPage() {
         });
         navigate('/dashboard');
       } else {
-        console.log('❌ [LoginPage] Login falhou - credenciais inválidas');
         toast({
           title: 'Erro no login',
           description: 'Usuário ou senha inválidos',
@@ -69,7 +61,6 @@ export function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-primary/80 px-4">
       {/* Exibe o valor da flag de mock para depuração */}
       <div style={{position: 'absolute', top: 10, right: 10, background: '#fff', color: '#333', padding: 4, borderRadius: 4, fontSize: 12, zIndex: 9999}}>
-        VITE_USE_MOCK: {String(import.meta.env.VITE_USE_MOCK)}
       </div>
       <MaterialCard elevation={4} className="p-8 w-full max-w-md animate-in fade-in-50 slide-in-from-bottom-10 duration-500">
         {/* Hospital Logo */}

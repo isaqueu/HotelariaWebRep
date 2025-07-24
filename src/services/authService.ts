@@ -7,36 +7,29 @@ import { encryptKey } from '@/lib/utils';
 
 
 export const authService = {
-  async login(credentials: LoginRequest): Promise<LoginResponse> {
-    console.log('🔄 [authService] Iniciando login...');
-    console.log('📝 [authService] Credenciais recebidas:', {
-      username: credentials.username,
-      password: credentials.password ? '***' : 'vazio'
-    });
+  async loginService(credentials: LoginRequest): Promise<LoginResponse> {
 
     console.log('🔒 [authService] Criptografando senha...');
-    credentials.password = await encryptKey(credentials.password);
-    console.log('✅ [authService] Senha criptografada com sucesso');
+    credentials.PASSWORD = await encryptKey(credentials.PASSWORD)
 
-    let requestBody: RequestBody = { message: '', data: [credentials] };
-    console.log('📦 [authService] Corpo da requisição preparado:', {
-      message: requestBody.message,
-      data: requestBody.data.map(d => ({ username: d.username, password: '***' }))
-    });
+    let requestBody: RequestBody = { message: 'Autenticação de usuário.', data: [credentials] };
 
     try {
       console.log('🚀 [authService] Enviando requisição para /auth/login...');
       const response = await api.post('/auth/login', requestBody);
+      console.log('📨 [authService] Resposta recebida:');
+      console.log(response);
       
-      console.log('📨 [authService] Resposta recebida:', {
-        status: response.status,
-        statusText: response.statusText,
-        data: {
-          access_token: response.data.access_token ? 'PRESENTE' : 'AUSENTE',
-          refresh_token: response.data.refresh_token ? 'PRESENTE' : 'AUSENTE',
-          user: response.data.user ? 'PRESENTE' : 'AUSENTE'
-        }
-      });
+      
+      // console.log('📨 [authService] Resposta recebida:', {
+      //   status: response.status,
+      //   statusText: response.statusText,
+      //   data: {
+      //     access_token: response.data.access_token ? 'PRESENTE' : 'AUSENTE',
+      //     refresh_token: response.data.refresh_token ? 'PRESENTE' : 'AUSENTE',
+      //     user: response.data.user ? 'PRESENTE' : 'AUSENTE'
+      //   }
+      // });
       
       return response.data;
     } catch (error) {
@@ -50,7 +43,7 @@ export const authService = {
     
     try {
       console.log('🚀 [authService] Enviando requisição para /auth/profile...');
-      const response = await api.get('/auth/profile');
+      const response = await api.post('/auth/profile');
       
       console.log('📨 [authService] Perfil recebido:', {
         status: response.status,
