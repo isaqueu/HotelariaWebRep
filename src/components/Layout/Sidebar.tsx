@@ -57,7 +57,7 @@ const menuStructure: MenuGroup[] = [
       },
       { 
         name: "Etapas de Processo", 
-        path: "/etapas", 
+        path: "/etapa", 
         icon: () => <EmojiIcon emoji="🔄" />, 
         color: "bg-emerald-400" 
       },
