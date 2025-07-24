@@ -18,7 +18,7 @@ export function TopNavigation({ onMenuToggle }: TopNavigationProps) {
   };
 
   return (
-    <header className="bg-gradient-to-b from-blue-800 to-blue-600 border-b border-blue-700 px-4 py-3 flex items-center justify-between shadow-lg">
+    <header className="bg-gradient-to-b from-blue-600 to-blue-500 border-b border-blue-700 px-4 py-3 flex items-center justify-between shadow-lg">
       <div className="flex items-center space-x-4">
         <MaterialButton
           variant="ghost"
