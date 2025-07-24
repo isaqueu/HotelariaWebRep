@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { MaterialCard } from '../components/ui/material-card';
@@ -37,10 +38,11 @@ export function DispositivoPage() {
     try {
       setIsLoading(true);
       const data = await dispositivoService.getAll();
-      setDispositivos(data);
+      setDispositivos(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erro ao carregar dispositivos:', error);
       toast({ title: 'Erro ao carregar dispositivos', variant: 'destructive' });
+      setDispositivos([]);
     } finally {
       setIsLoading(false);
     }
@@ -94,11 +96,11 @@ export function DispositivoPage() {
     setIsCreateModalOpen(true);
   };
 
-  const filteredDispositivos = Array.isArray(dispositivos) ? dispositivos.filter(dispositivo =>
-    dispositivo.nm_dispositivo.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    dispositivo.tp_dispositivo.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    dispositivo.serial.toLowerCase().includes(searchQuery.toLowerCase())
-  ): [];
+  const filteredDispositivos = (Array.isArray(dispositivos) && dispositivos.length > 0) ? dispositivos.filter(dispositivo =>
+    dispositivo?.nm_dispositivo?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    dispositivo?.tp_dispositivo?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    dispositivo?.serial?.toLowerCase().includes(searchQuery.toLowerCase())
+  ) : [];
 
   if (isLoading) {
     return <div className="flex justify-center p-8">Carregando...</div>;
@@ -106,21 +108,28 @@ export function DispositivoPage() {
 
   return (
     <div className="space-y-6">
+      {/* Page Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Dispositivos</h1>
+        <div>
+          <h1 className="text-3xl font-medium text-gray-800 mb-2">Dispositivos</h1>
+          <p className="text-gray-600">Gerencie os dispositivos registrados no sistema</p>
+        </div>
+
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
-            <MaterialButton onClick={openCreateModal} className="gap-2">
-              <Plus className="w-4 h-4" />
+            <MaterialButton onClick={openCreateModal} className="flex items-center">
+              <Plus className="mr-2 h-5 w-5" />
               Novo Dispositivo
             </MaterialButton>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>
                 {editingItem ? 'Editar Dispositivo' : 'Novo Dispositivo'}
               </DialogTitle>
             </DialogHeader>
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                 <FormField
@@ -139,6 +148,7 @@ export function DispositivoPage() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="tp_dispositivo"
@@ -155,6 +165,7 @@ export function DispositivoPage() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="serial"
@@ -171,6 +182,7 @@ export function DispositivoPage() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="app_versao_instalada"
@@ -186,6 +198,7 @@ export function DispositivoPage() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="app_versao_atualizada"
@@ -201,49 +214,49 @@ export function DispositivoPage() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="sn_ativo"
                   render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-center space-x-2">
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
                         <Switch
                           checked={field.value === 'S'}
                           onCheckedChange={(checked) => field.onChange(checked ? 'S' : 'N')}
                         />
-                        <Label>Ativo</Label>
-                      </div>
-                      <FormMessage />
+                      </FormControl>
+                      <Label>Ativo</Label>
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="sn_atualizacao_liberada"
                   render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-center space-x-2">
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
                         <Switch
                           checked={field.value === 'S'}
                           onCheckedChange={(checked) => field.onChange(checked ? 'S' : 'N')}
                         />
-                        <Label>Atualização Liberada</Label>
-                      </div>
-                      <FormMessage />
+                      </FormControl>
+                      <Label>Atualização Liberada</Label>
                     </FormItem>
                   )}
                 />
-                <div className="flex gap-2 pt-4">
-                  <MaterialButton type="submit" className="flex-1">
-                    {editingItem ? 'Atualizar' : 'Criar'}
-                  </MaterialButton>
-                  <MaterialButton 
-                    type="button" 
-                    variant="outline" 
+
+                <div className="flex justify-end space-x-2">
+                  <MaterialButton
+                    type="button"
+                    variant="outline"
                     onClick={() => setIsCreateModalOpen(false)}
-                    className="flex-1"
                   >
                     Cancelar
+                  </MaterialButton>
+                  <MaterialButton type="submit">
+                    {editingItem ? 'Atualizar' : 'Criar'}
                   </MaterialButton>
                 </div>
               </form>
@@ -252,59 +265,110 @@ export function DispositivoPage() {
         </Dialog>
       </div>
 
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <FloatingLabelInput
-            label="Pesquisar dispositivos..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-      </div>
+      {/* Search */}
+      <MaterialCard className="p-6">
+        <FloatingLabelInput
+          label="Buscar dispositivo..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          icon={<Search className="h-5 w-5" />}
+        />
+      </MaterialCard>
 
-      <div className="grid gap-4">
-        {filteredDispositivos.map((dispositivo) => (
-          <MaterialCard key={dispositivo.cd_dispositivo} className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <h3 className="font-semibold">{dispositivo.nm_dispositivo}</h3>
-                <p className="text-sm text-gray-600 mt-1">
-                  Tipo: {dispositivo.tp_dispositivo} | Serial: {dispositivo.serial}
-                </p>
-                <p className="text-sm text-gray-600">
-                  Versão Instalada: {dispositivo.app_versao_instalada} | Versão Atualizada: {dispositivo.app_versao_atualizada}
-                </p>
-                <div className="flex gap-2 mt-2">
-                  <Badge variant={dispositivo.sn_ativo === 'S' ? 'default' : 'secondary'}>
-                    {dispositivo.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
-                  </Badge>
-                  <Badge variant={dispositivo.sn_atualizacao_liberada === 'S' ? 'default' : 'secondary'}>
-                    {dispositivo.sn_atualizacao_liberada === 'S' ? 'Atualização Liberada' : 'Atualização Bloqueada'}
-                  </Badge>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <MaterialButton
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleEdit(dispositivo)}
-                >
-                  <Edit className="w-4 h-4" />
-                </MaterialButton>
-                <MaterialButton
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDelete(dispositivo.cd_dispositivo)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </MaterialButton>
-              </div>
-            </div>
-          </MaterialCard>
-        ))}
-      </div>
+      {/* Data Table */}
+      <MaterialCard className="overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Código
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Nome
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Tipo
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Serial
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Versões
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Ações
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredDispositivos.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                    Nenhum dispositivo encontrado
+                  </td>
+                </tr>
+              ) : (
+                filteredDispositivos.map((dispositivo) => (
+                  <tr key={dispositivo.cd_dispositivo} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {dispositivo.cd_dispositivo}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {dispositivo.nm_dispositivo}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {dispositivo.tp_dispositivo}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {dispositivo.serial}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <div className="space-y-1">
+                        <div>Inst: {dispositivo.app_versao_instalada}</div>
+                        <div>Atual: {dispositivo.app_versao_atualizada}</div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="space-y-1">
+                        <Badge variant={dispositivo.sn_ativo === 'S' ? 'default' : 'secondary'}>
+                          {dispositivo.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
+                        </Badge>
+                        <Badge variant={dispositivo.sn_atualizacao_liberada === 'S' ? 'default' : 'secondary'}>
+                          {dispositivo.sn_atualizacao_liberada === 'S' ? 'Atualização Liberada' : 'Atualização Bloqueada'}
+                        </Badge>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                      <MaterialButton
+                        variant="outline"
+                        size="sm"
+                        elevated={false}
+                        onClick={() => handleEdit(dispositivo)}
+                        className="p-2"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </MaterialButton>
+                      <MaterialButton
+                        variant="destructive"
+                        size="sm"
+                        elevated={false}
+                        onClick={() => handleDelete(dispositivo.cd_dispositivo)}
+                        className="p-2"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </MaterialButton>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </MaterialCard>
     </div>
   );
 }

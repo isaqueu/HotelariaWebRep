@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { MaterialCard } from '../components/ui/material-card';
@@ -6,7 +7,6 @@ import { FloatingLabelInput } from '../components/ui/floating-label-input';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
@@ -91,8 +91,8 @@ export function CategoriaChamadoPage() {
     setIsCreateModalOpen(true);
   };
 
-  const filteredCategorias = Array.isArray(categorias) ? categorias.filter(categoria =>
-    categoria.ds_categoria_chamado.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredCategorias = (Array.isArray(categorias) && categorias.length > 0) ? categorias.filter(categoria =>
+    categoria?.ds_categoria_chamado?.toLowerCase().includes(searchQuery.toLowerCase())
   ) : [];
 
   if (isLoading) {
@@ -101,21 +101,28 @@ export function CategoriaChamadoPage() {
 
   return (
     <div className="space-y-6">
+      {/* Page Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Categorias de Chamado</h1>
+        <div>
+          <h1 className="text-3xl font-medium text-gray-800 mb-2">Categorias de Chamado</h1>
+          <p className="text-gray-600">Gerencie as categorias de chamado disponíveis no sistema</p>
+        </div>
+
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
-            <MaterialButton onClick={openCreateModal} className="gap-2">
-              <Plus className="w-4 h-4" />
+            <MaterialButton onClick={openCreateModal} className="flex items-center">
+              <Plus className="mr-2 h-5 w-5" />
               Nova Categoria
             </MaterialButton>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>
                 {editingItem ? 'Editar Categoria' : 'Nova Categoria de Chamado'}
               </DialogTitle>
             </DialogHeader>
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                 <FormField
@@ -125,7 +132,7 @@ export function CategoriaChamadoPage() {
                     <FormItem>
                       <FormControl>
                         <FloatingLabelInput
-                          label="Descrição"
+                          label="Descrição da Categoria"
                           {...field}
                           required
                         />
@@ -134,34 +141,33 @@ export function CategoriaChamadoPage() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="sn_ativo"
                   render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-center space-x-2">
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
                         <Switch
                           checked={field.value === 'S'}
                           onCheckedChange={(checked) => field.onChange(checked ? 'S' : 'N')}
                         />
-                        <Label>Ativo</Label>
-                      </div>
-                      <FormMessage />
+                      </FormControl>
+                      <Label>Ativo</Label>
                     </FormItem>
                   )}
                 />
-                <div className="flex gap-2 pt-4">
-                  <MaterialButton type="submit" className="flex-1">
-                    {editingItem ? 'Atualizar' : 'Criar'}
-                  </MaterialButton>
-                  <MaterialButton 
-                    type="button" 
-                    variant="outline" 
+
+                <div className="flex justify-end space-x-2">
+                  <MaterialButton
+                    type="button"
+                    variant="outline"
                     onClick={() => setIsCreateModalOpen(false)}
-                    className="flex-1"
                   >
                     Cancelar
+                  </MaterialButton>
+                  <MaterialButton type="submit">
+                    {editingItem ? 'Atualizar' : 'Criar'}
                   </MaterialButton>
                 </div>
               </form>
@@ -170,50 +176,84 @@ export function CategoriaChamadoPage() {
         </Dialog>
       </div>
 
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <FloatingLabelInput
-            label="Pesquisar categorias..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-      </div>
+      {/* Search */}
+      <MaterialCard className="p-6">
+        <FloatingLabelInput
+          label="Buscar categoria de chamado..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          icon={<Search className="h-5 w-5" />}
+        />
+      </MaterialCard>
 
-      <div className="grid gap-4">
-        {filteredCategorias.map((categoria) => (
-          <MaterialCard key={categoria.cd_categoria_chamado} className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <h3 className="font-semibold">{categoria.ds_categoria_chamado}</h3>
-                <div className="flex gap-2 mt-2">
-                  <Badge variant={categoria.sn_ativo === 'S' ? 'default' : 'secondary'}>
-                    {categoria.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
-                  </Badge>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <MaterialButton
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleEdit(categoria)}
-                >
-                  <Edit className="w-4 h-4" />
-                </MaterialButton>
-                <MaterialButton
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDelete(categoria.cd_categoria_chamado)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </MaterialButton>
-              </div>
-            </div>
-          </MaterialCard>
-        ))}
-      </div>
+      {/* Data Table */}
+      <MaterialCard className="overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Código
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Descrição
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Ações
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredCategorias.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                    Nenhuma categoria de chamado encontrada
+                  </td>
+                </tr>
+              ) : (
+                filteredCategorias.map((categoria) => (
+                  <tr key={categoria.cd_categoria_chamado} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {categoria.cd_categoria_chamado}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {categoria.ds_categoria_chamado}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <Badge variant={categoria.sn_ativo === 'S' ? 'default' : 'secondary'}>
+                        {categoria.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
+                      </Badge>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                      <MaterialButton
+                        variant="outline"
+                        size="sm"
+                        elevated={false}
+                        onClick={() => handleEdit(categoria)}
+                        className="p-2"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </MaterialButton>
+                      <MaterialButton
+                        variant="destructive"
+                        size="sm"
+                        elevated={false}
+                        onClick={() => handleDelete(categoria.cd_categoria_chamado)}
+                        className="p-2"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </MaterialButton>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </MaterialCard>
     </div>
   );
 }

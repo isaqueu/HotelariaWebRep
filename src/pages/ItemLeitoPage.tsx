@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { MaterialCard } from '../components/ui/material-card';
@@ -116,21 +117,28 @@ export function ItemLeitoPage() {
 
   return (
     <div className="space-y-6">
+      {/* Page Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Itens do Leito</h1>
+        <div>
+          <h1 className="text-3xl font-medium text-gray-800 mb-2">Itens do Leito</h1>
+          <p className="text-gray-600">Gerencie os itens associados aos leitos hospitalares</p>
+        </div>
+
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
-            <MaterialButton onClick={openCreateModal} className="gap-2">
-              <Plus className="w-4 h-4" />
-              Novo Item do Leito
+            <MaterialButton onClick={openCreateModal} className="flex items-center">
+              <Plus className="mr-2 h-5 w-5" />
+              Novo Item
             </MaterialButton>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>
                 {editingItem ? 'Editar Item do Leito' : 'Novo Item do Leito'}
               </DialogTitle>
             </DialogHeader>
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                 <FormField
@@ -140,7 +148,7 @@ export function ItemLeitoPage() {
                     <FormItem>
                       <FormControl>
                         <FloatingLabelInput
-                          label="Descrição"
+                          label="Descrição do Item"
                           {...field}
                           required
                         />
@@ -149,6 +157,7 @@ export function ItemLeitoPage() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="cd_item_local"
@@ -175,65 +184,65 @@ export function ItemLeitoPage() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="sn_ativo"
                   render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-center space-x-2">
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
                         <Switch
                           checked={field.value === 'S'}
                           onCheckedChange={(checked) => field.onChange(checked ? 'S' : 'N')}
                         />
-                        <Label>Ativo</Label>
-                      </div>
-                      <FormMessage />
+                      </FormControl>
+                      <Label>Ativo</Label>
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="sn_item_coletivo_enfermaria"
                   render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-center space-x-2">
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
                         <Switch
                           checked={field.value === 'S'}
                           onCheckedChange={(checked) => field.onChange(checked ? 'S' : 'N')}
                         />
-                        <Label>Item Coletivo Enfermaria</Label>
-                      </div>
-                      <FormMessage />
+                      </FormControl>
+                      <Label>Item Coletivo Enfermaria</Label>
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="sn_item_checklist"
                   render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-center space-x-2">
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
                         <Switch
                           checked={field.value === 'S'}
                           onCheckedChange={(checked) => field.onChange(checked ? 'S' : 'N')}
                         />
-                        <Label>Item Checklist</Label>
-                      </div>
-                      <FormMessage />
+                      </FormControl>
+                      <Label>Item Checklist</Label>
                     </FormItem>
                   )}
                 />
-                <div className="flex gap-2 pt-4">
-                  <MaterialButton type="submit" className="flex-1">
-                    {editingItem ? 'Atualizar' : 'Criar'}
-                  </MaterialButton>
-                  <MaterialButton 
-                    type="button" 
-                    variant="outline" 
+
+                <div className="flex justify-end space-x-2">
+                  <MaterialButton
+                    type="button"
+                    variant="outline"
                     onClick={() => setIsCreateModalOpen(false)}
-                    className="flex-1"
                   >
                     Cancelar
+                  </MaterialButton>
+                  <MaterialButton type="submit">
+                    {editingItem ? 'Atualizar' : 'Criar'}
                   </MaterialButton>
                 </div>
               </form>
@@ -242,59 +251,98 @@ export function ItemLeitoPage() {
         </Dialog>
       </div>
 
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <FloatingLabelInput
-            label="Pesquisar itens do leito..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-      </div>
+      {/* Search */}
+      <MaterialCard className="p-6">
+        <FloatingLabelInput
+          label="Buscar item do leito..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          icon={<Search className="h-5 w-5" />}
+        />
+      </MaterialCard>
 
-      <div className="grid gap-4">
-        {filteredItens.map((item) => (
-          <MaterialCard key={item.cd_item_leito} className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <h3 className="font-semibold">{item.ds_item_leito}</h3>
-                <p className="text-sm text-gray-600 mt-1">
-                  Item Local: {getItemLocalName(item.cd_item_local)}
-                </p>
-                <div className="flex gap-2 mt-2">
-                  <Badge variant={item.sn_ativo === 'S' ? 'default' : 'secondary'}>
-                    {item.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
-                  </Badge>
-                  <Badge variant={item.sn_item_coletivo_enfermaria === 'S' ? 'default' : 'secondary'}>
-                    {item.sn_item_coletivo_enfermaria === 'S' ? 'Coletivo Enfermaria' : 'Individual'}
-                  </Badge>
-                  <Badge variant={item.sn_item_checklist === 'S' ? 'default' : 'secondary'}>
-                    {item.sn_item_checklist === 'S' ? 'Item Checklist' : 'Não é Checklist'}
-                  </Badge>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <MaterialButton
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleEdit(item)}
-                >
-                  <Edit className="w-4 h-4" />
-                </MaterialButton>
-                <MaterialButton
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDelete(item.cd_item_leito)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </MaterialButton>
-              </div>
-            </div>
-          </MaterialCard>
-        ))}
-      </div>
+      {/* Data Table */}
+      <MaterialCard className="overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Código
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Descrição
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Item Local
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Ações
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredItens.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                    Nenhum item do leito encontrado
+                  </td>
+                </tr>
+              ) : (
+                filteredItens.map((item) => (
+                  <tr key={item.cd_item_leito} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {item.cd_item_leito}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {item.ds_item_leito}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {getItemLocalName(item.cd_item_local)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="space-y-1">
+                        <Badge variant={item.sn_ativo === 'S' ? 'default' : 'secondary'}>
+                          {item.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
+                        </Badge>
+                        <Badge variant={item.sn_item_coletivo_enfermaria === 'S' ? 'default' : 'secondary'}>
+                          {item.sn_item_coletivo_enfermaria === 'S' ? 'Coletivo Enfermaria' : 'Individual'}
+                        </Badge>
+                        <Badge variant={item.sn_item_checklist === 'S' ? 'default' : 'secondary'}>
+                          {item.sn_item_checklist === 'S' ? 'Item Checklist' : 'Não é Checklist'}
+                        </Badge>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                      <MaterialButton
+                        variant="outline"
+                        size="sm"
+                        elevated={false}
+                        onClick={() => handleEdit(item)}
+                        className="p-2"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </MaterialButton>
+                      <MaterialButton
+                        variant="destructive"
+                        size="sm"
+                        elevated={false}
+                        onClick={() => handleDelete(item.cd_item_leito)}
+                        className="p-2"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </MaterialButton>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </MaterialCard>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { MaterialCard } from '../components/ui/material-card';
@@ -107,7 +108,7 @@ export function EtapaPage() {
     setIsCreateModalOpen(true);
   };
 
-  const filteredEtapas = Array.isArray(etapas) ? etapas.filter(etapa =>
+  const filteredEtapas = (Array.isArray(etapas) && etapas.length > 0) ? etapas.filter(etapa =>
     etapa?.ds_etapa?.toLowerCase().includes(searchQuery.toLowerCase())
   ) : [];
 
@@ -127,21 +128,28 @@ export function EtapaPage() {
 
   return (
     <div className="space-y-6">
+      {/* Page Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Etapas</h1>
+        <div>
+          <h1 className="text-3xl font-medium text-gray-800 mb-2">Etapas de Processo</h1>
+          <p className="text-gray-600">Gerencie as etapas dos processos disponíveis no sistema</p>
+        </div>
+
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
-            <MaterialButton onClick={openCreateModal} className="gap-2">
-              <Plus className="w-4 h-4" />
+            <MaterialButton onClick={openCreateModal} className="flex items-center">
+              <Plus className="mr-2 h-5 w-5" />
               Nova Etapa
             </MaterialButton>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>
                 {editingItem ? 'Editar Etapa' : 'Nova Etapa'}
               </DialogTitle>
             </DialogHeader>
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                 <FormField
@@ -151,7 +159,7 @@ export function EtapaPage() {
                     <FormItem>
                       <FormControl>
                         <FloatingLabelInput
-                          label="Descrição"
+                          label="Descrição da Etapa"
                           {...field}
                           required
                         />
@@ -160,6 +168,7 @@ export function EtapaPage() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="ordem"
@@ -178,6 +187,7 @@ export function EtapaPage() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="cd_categoria_chamado"
@@ -204,6 +214,7 @@ export function EtapaPage() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="cd_tipo_operador"
@@ -230,49 +241,49 @@ export function EtapaPage() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="sn_ativo"
                   render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-center space-x-2">
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
                         <Switch
                           checked={field.value === 'S'}
                           onCheckedChange={(checked) => field.onChange(checked ? 'S' : 'N')}
                         />
-                        <Label>Ativo</Label>
-                      </div>
-                      <FormMessage />
+                      </FormControl>
+                      <Label>Ativo</Label>
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="sn_le_qrcode"
                   render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-center space-x-2">
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
                         <Switch
                           checked={field.value === 'S'}
                           onCheckedChange={(checked) => field.onChange(checked ? 'S' : 'N')}
                         />
-                        <Label>Lê QRCode</Label>
-                      </div>
-                      <FormMessage />
+                      </FormControl>
+                      <Label>Lê QRCode</Label>
                     </FormItem>
                   )}
                 />
-                <div className="flex gap-2 pt-4">
-                  <MaterialButton type="submit" className="flex-1">
-                    {editingItem ? 'Atualizar' : 'Criar'}
-                  </MaterialButton>
-                  <MaterialButton 
-                    type="button" 
-                    variant="outline" 
+
+                <div className="flex justify-end space-x-2">
+                  <MaterialButton
+                    type="button"
+                    variant="outline"
                     onClick={() => setIsCreateModalOpen(false)}
-                    className="flex-1"
                   >
                     Cancelar
+                  </MaterialButton>
+                  <MaterialButton type="submit">
+                    {editingItem ? 'Atualizar' : 'Criar'}
                   </MaterialButton>
                 </div>
               </form>
@@ -281,57 +292,107 @@ export function EtapaPage() {
         </Dialog>
       </div>
 
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <FloatingLabelInput
-            label="Pesquisar etapas..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-      </div>
+      {/* Search */}
+      <MaterialCard className="p-6">
+        <FloatingLabelInput
+          label="Buscar etapa..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          icon={<Search className="h-5 w-5" />}
+        />
+      </MaterialCard>
 
-      <div className="grid gap-4">
-        {filteredEtapas.map((etapa) => (
-          <MaterialCard key={etapa.cd_etapa} className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <h3 className="font-semibold">{etapa.ds_etapa}</h3>
-                <p className="text-sm text-gray-600 mt-1">
-                  Ordem: {etapa.ordem} | Categoria: {getCategoriaName(etapa.cd_categoria_chamado)} | 
-                  Tipo Operador: {getTipoOperadorName(etapa.cd_tipo_operador)}
-                </p>
-                <div className="flex gap-2 mt-2">
-                  <Badge variant={etapa.sn_ativo === 'S' ? 'default' : 'secondary'}>
-                    {etapa.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
-                  </Badge>
-                  <Badge variant={etapa.sn_le_qrcode === 'S' ? 'default' : 'secondary'}>
-                    {etapa.sn_le_qrcode === 'S' ? 'Lê QRCode' : 'Não lê QRCode'}
-                  </Badge>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <MaterialButton
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleEdit(etapa)}
-                >
-                  <Edit className="w-4 h-4" />
-                </MaterialButton>
-                <MaterialButton
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDelete(etapa.cd_etapa)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </MaterialButton>
-              </div>
-            </div>
-          </MaterialCard>
-        ))}
-      </div>
+      {/* Data Table */}
+      <MaterialCard className="overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Código
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Descrição
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Ordem
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Categoria
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Tipo Operador
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Ações
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredEtapas.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                    Nenhuma etapa encontrada
+                  </td>
+                </tr>
+              ) : (
+                filteredEtapas.map((etapa) => (
+                  <tr key={etapa.cd_etapa} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {etapa.cd_etapa}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {etapa.ds_etapa}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {etapa.ordem}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {getCategoriaName(etapa.cd_categoria_chamado)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {getTipoOperadorName(etapa.cd_tipo_operador)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="space-y-1">
+                        <Badge variant={etapa.sn_ativo === 'S' ? 'default' : 'secondary'}>
+                          {etapa.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
+                        </Badge>
+                        <Badge variant={etapa.sn_le_qrcode === 'S' ? 'default' : 'secondary'}>
+                          {etapa.sn_le_qrcode === 'S' ? 'Lê QRCode' : 'Não lê QRCode'}
+                        </Badge>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                      <MaterialButton
+                        variant="outline"
+                        size="sm"
+                        elevated={false}
+                        onClick={() => handleEdit(etapa)}
+                        className="p-2"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </MaterialButton>
+                      <MaterialButton
+                        variant="destructive"
+                        size="sm"
+                        elevated={false}
+                        onClick={() => handleDelete(etapa.cd_etapa)}
+                        className="p-2"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </MaterialButton>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </MaterialCard>
     </div>
   );
 }
