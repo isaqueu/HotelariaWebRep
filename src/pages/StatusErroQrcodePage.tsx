@@ -40,11 +40,13 @@ export function StatusErroQrcodePage() {
         statusErroQrcodeService.getAll(),
         categoriaChamadoService.getAll(),
       ]);
-      setStatusErros(statusErrosData);
-      setCategorias(categoriasData);
+      setStatusErros(Array.isArray(statusErrosData) ? statusErrosData : []);
+      setCategorias(Array.isArray(categoriasData) ? categoriasData : []);
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
       toast({ title: 'Erro ao carregar dados', variant: 'destructive' });
+      setStatusErros([]);
+      setCategorias([]);
     } finally {
       setIsLoading(false);
     }
@@ -99,9 +101,9 @@ export function StatusErroQrcodePage() {
   };
 
   // Filtered data
-  const filteredStatus = statusErros.filter(status =>
+  const filteredStatus = Array.isArray(statusErros) ? statusErros.filter(status =>
     status.ds_status_erro_qrcode.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ) : [];
 
   if (isLoading) {
     return <div className="flex justify-center p-8">Carregando...</div>;

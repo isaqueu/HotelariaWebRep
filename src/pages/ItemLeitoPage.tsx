@@ -29,6 +29,8 @@ export function ItemLeitoPage() {
       ds_item_leito: '',
       cd_item_local: 0,
       sn_ativo: 'S',
+      sn_item_coletivo_enfermaria: 'N',
+      sn_item_checklist: 'N',
     },
   });
 
@@ -39,11 +41,13 @@ export function ItemLeitoPage() {
         itemLeitoService.getAll(),
         itemLocalService.getAll(),
       ]);
-      setItensLeito(itensLeitoData);
-      setItensLocal(itensLocalData);
+      setItensLeito(Array.isArray(itensLeitoData) ? itensLeitoData : []);
+      setItensLocal(Array.isArray(itensLocalData) ? itensLocalData : []);
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
       toast({ title: 'Erro ao carregar dados', variant: 'destructive' });
+      setItensLeito([]);
+      setItensLocal([]);
     } finally {
       setIsLoading(false);
     }
@@ -97,9 +101,9 @@ export function ItemLeitoPage() {
     setIsCreateModalOpen(true);
   };
 
-  const filteredItens = itensLeito.filter(item =>
+  const filteredItens = Array.isArray(itensLeito) ? itensLeito.filter(item =>
     item.ds_item_leito.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ) : [];
 
   const getItemLocalName = (id: number) => {
     const item = itensLocal.find(i => i.cd_item_local === id);
@@ -187,6 +191,38 @@ export function ItemLeitoPage() {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="sn_item_coletivo_enfermaria"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center space-x-2">
+                        <Switch
+                          checked={field.value === 'S'}
+                          onCheckedChange={(checked) => field.onChange(checked ? 'S' : 'N')}
+                        />
+                        <Label>Item Coletivo Enfermaria</Label>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="sn_item_checklist"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center space-x-2">
+                        <Switch
+                          checked={field.value === 'S'}
+                          onCheckedChange={(checked) => field.onChange(checked ? 'S' : 'N')}
+                        />
+                        <Label>Item Checklist</Label>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <div className="flex gap-2 pt-4">
                   <MaterialButton type="submit" className="flex-1">
                     {editingItem ? 'Atualizar' : 'Criar'}
@@ -230,6 +266,12 @@ export function ItemLeitoPage() {
                 <div className="flex gap-2 mt-2">
                   <Badge variant={item.sn_ativo === 'S' ? 'default' : 'secondary'}>
                     {item.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
+                  </Badge>
+                  <Badge variant={item.sn_item_coletivo_enfermaria === 'S' ? 'default' : 'secondary'}>
+                    {item.sn_item_coletivo_enfermaria === 'S' ? 'Coletivo Enfermaria' : 'Individual'}
+                  </Badge>
+                  <Badge variant={item.sn_item_checklist === 'S' ? 'default' : 'secondary'}>
+                    {item.sn_item_checklist === 'S' ? 'Item Checklist' : 'Não é Checklist'}
                   </Badge>
                 </div>
               </div>

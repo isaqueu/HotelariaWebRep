@@ -25,7 +25,6 @@ export function CategoriaChamadoPage() {
   const form = useForm<Omit<CategoriaChamado, 'cd_categoria_chamado'>>({
     defaultValues: {
       ds_categoria_chamado: '',
-      prioridade: 1,
       sn_ativo: 'S',
     },
   });
@@ -135,31 +134,7 @@ export function CategoriaChamadoPage() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="prioridade"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Select 
-                          value={field.value.toString()} 
-                          onValueChange={(value) => field.onChange(parseInt(value))}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione a prioridade" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="1">Baixa</SelectItem>
-                            <SelectItem value="2">Média</SelectItem>
-                            <SelectItem value="3">Alta</SelectItem>
-                            <SelectItem value="4">Crítica</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                
                 <FormField
                   control={form.control}
                   name="sn_ativo"
@@ -214,9 +189,6 @@ export function CategoriaChamadoPage() {
               <div className="flex-1">
                 <h3 className="font-semibold">{categoria.ds_categoria_chamado}</h3>
                 <div className="flex gap-2 mt-2">
-                  <Badge variant={categoria.prioridade === 4 ? 'destructive' : categoria.prioridade === 3 ? 'default' : 'secondary'}>
-                    Prioridade: {categoria.prioridade === 1 ? 'Baixa' : categoria.prioridade === 2 ? 'Média' : categoria.prioridade === 3 ? 'Alta' : 'Crítica'}
-                  </Badge>
                   <Badge variant={categoria.sn_ativo === 'S' ? 'default' : 'secondary'}>
                     {categoria.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
                   </Badge>

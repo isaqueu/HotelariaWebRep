@@ -34,10 +34,11 @@ export function TipoLimpezaPage() {
     try {
       setIsLoading(true);
       const data = await tipoLimpezaService.getAll();
-      setTiposLimpeza(data);
+      setTiposLimpeza(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erro ao carregar tipos de limpeza:', error);
       toast({ title: 'Erro ao carregar tipos de limpeza', variant: 'destructive' });
+      setTiposLimpeza([]);
     } finally {
       setIsLoading(false);
     }
@@ -92,9 +93,9 @@ export function TipoLimpezaPage() {
   };
 
   // Filtered data
-  const filteredTipos = tiposLimpeza.filter(tipo =>
+  const filteredTipos = Array.isArray(tiposLimpeza) ? tiposLimpeza.filter(tipo =>
     tipo.ds_tipo_limpeza.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ) : [];
 
   if (isLoading) {
     return <div className="flex justify-center p-8">Carregando...</div>;

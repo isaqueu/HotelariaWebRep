@@ -23,12 +23,13 @@ export function DispositivoPage() {
 
   const form = useForm<Omit<Dispositivo, 'cd_dispositivo'>>({
     defaultValues: {
-      ds_dispositivo: '',
-      ds_marca: '',
-      ds_modelo: '',
-      ds_versao: '',
-      ds_sistema_operacional: '',
+      nm_dispositivo: '',
+      tp_dispositivo: '',
+      serial: '',
+      app_versao_instalada: '',
+      app_versao_atualizada: '',
       sn_ativo: 'S',
+      sn_atualizacao_liberada: 'N',
     },
   });
 
@@ -94,9 +95,9 @@ export function DispositivoPage() {
   };
 
   const filteredDispositivos = Array.isArray(dispositivos) ? dispositivos.filter(dispositivo =>
-    dispositivo.ds_dispositivo.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    dispositivo.ds_marca.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    dispositivo.ds_modelo.toLowerCase().includes(searchQuery.toLowerCase())
+    dispositivo.nm_dispositivo.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    dispositivo.tp_dispositivo.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    dispositivo.serial.toLowerCase().includes(searchQuery.toLowerCase())
   ): [];
 
   if (isLoading) {
@@ -124,12 +125,12 @@ export function DispositivoPage() {
               <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="ds_dispositivo"
+                  name="nm_dispositivo"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
                         <FloatingLabelInput
-                          label="Descrição"
+                          label="Nome do Dispositivo"
                           {...field}
                           required
                         />
@@ -140,12 +141,12 @@ export function DispositivoPage() {
                 />
                 <FormField
                   control={form.control}
-                  name="ds_marca"
+                  name="tp_dispositivo"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
                         <FloatingLabelInput
-                          label="Marca"
+                          label="Tipo do Dispositivo"
                           {...field}
                           required
                         />
@@ -156,12 +157,12 @@ export function DispositivoPage() {
                 />
                 <FormField
                   control={form.control}
-                  name="ds_modelo"
+                  name="serial"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
                         <FloatingLabelInput
-                          label="Modelo"
+                          label="Serial"
                           {...field}
                           required
                         />
@@ -172,12 +173,12 @@ export function DispositivoPage() {
                 />
                 <FormField
                   control={form.control}
-                  name="ds_versao"
+                  name="app_versao_instalada"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
                         <FloatingLabelInput
-                          label="Versão"
+                          label="Versão Instalada"
                           {...field}
                         />
                       </FormControl>
@@ -187,12 +188,12 @@ export function DispositivoPage() {
                 />
                 <FormField
                   control={form.control}
-                  name="ds_sistema_operacional"
+                  name="app_versao_atualizada"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
                         <FloatingLabelInput
-                          label="Sistema Operacional"
+                          label="Versão Atualizada"
                           {...field}
                         />
                       </FormControl>
@@ -211,6 +212,22 @@ export function DispositivoPage() {
                           onCheckedChange={(checked) => field.onChange(checked ? 'S' : 'N')}
                         />
                         <Label>Ativo</Label>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="sn_atualizacao_liberada"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center space-x-2">
+                        <Switch
+                          checked={field.value === 'S'}
+                          onCheckedChange={(checked) => field.onChange(checked ? 'S' : 'N')}
+                        />
+                        <Label>Atualização Liberada</Label>
                       </div>
                       <FormMessage />
                     </FormItem>
@@ -252,16 +269,19 @@ export function DispositivoPage() {
           <MaterialCard key={dispositivo.cd_dispositivo} className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <h3 className="font-semibold">{dispositivo.ds_dispositivo}</h3>
+                <h3 className="font-semibold">{dispositivo.nm_dispositivo}</h3>
                 <p className="text-sm text-gray-600 mt-1">
-                  {dispositivo.ds_marca} {dispositivo.ds_modelo}
+                  Tipo: {dispositivo.tp_dispositivo} | Serial: {dispositivo.serial}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Versão Instalada: {dispositivo.app_versao_instalada} | Versão Atualizada: {dispositivo.app_versao_atualizada}
                 </p>
                 <div className="flex gap-2 mt-2">
-                  <Badge variant="outline">
-                    {dispositivo.ds_sistema_operacional || 'SO não informado'}
-                  </Badge>
                   <Badge variant={dispositivo.sn_ativo === 'S' ? 'default' : 'secondary'}>
                     {dispositivo.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
+                  </Badge>
+                  <Badge variant={dispositivo.sn_atualizacao_liberada === 'S' ? 'default' : 'secondary'}>
+                    {dispositivo.sn_atualizacao_liberada === 'S' ? 'Atualização Liberada' : 'Atualização Bloqueada'}
                   </Badge>
                 </div>
               </div>

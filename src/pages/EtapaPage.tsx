@@ -29,9 +29,11 @@ export function EtapaPage() {
   const form = useForm<Omit<Etapa, 'cd_etapa'>>({
     defaultValues: {
       ds_etapa: '',
+      ordem: 1,
       cd_categoria_chamado: 0,
       cd_tipo_operador: 0,
       sn_ativo: 'S',
+      sn_le_qrcode: 'N',
     },
   });
 
@@ -43,12 +45,15 @@ export function EtapaPage() {
         categoriaChamadoService.getAll(),
         tipoOperadorService.getAll(),
       ]);
-      setEtapas(etapasData);
-      setCategorias(categoriasData);
-      setTiposOperador(tiposOperadorData);
+      setEtapas(Array.isArray(etapasData) ? etapasData : []);
+      setCategorias(Array.isArray(categoriasData) ? categoriasData : []);
+      setTiposOperador(Array.isArray(tiposOperadorData) ? tiposOperadorData : []);
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
       toast({ title: 'Erro ao carregar dados', variant: 'destructive' });
+      setEtapas([]);
+      setCategorias([]);
+      setTiposOperador([]);
     } finally {
       setIsLoading(false);
     }
@@ -102,9 +107,9 @@ export function EtapaPage() {
     setIsCreateModalOpen(true);
   };
 
-  const filteredEtapas = etapas.filter(etapa =>
+  const filteredEtapas = Array.isArray(etapas) ? etapas.filter(etapa =>
     etapa.ds_etapa.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ) : [];
 
   const getCategoriaName = (id: number) => {
     const categoria = categorias.find(c => c.cd_categoria_chamado === id);
@@ -148,6 +153,24 @@ export function EtapaPage() {
                         <FloatingLabelInput
                           label="Descrição"
                           {...field}
+                          required
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="ordem"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <FloatingLabelInput
+                          label="Ordem"
+                          type="number"
+                          {...field}
+                          onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
                           required
                         />
                       </FormControl>
@@ -223,6 +246,22 @@ export function EtapaPage() {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="sn_le_qrcode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center space-x-2">
+                        <Switch
+                          checked={field.value === 'S'}
+                          onCheckedChange={(checked) => field.onChange(checked ? 'S' : 'N')}
+                        />
+                        <Label>Lê QRCode</Label>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <div className="flex gap-2 pt-4">
                   <MaterialButton type="submit" className="flex-1">
                     {editingItem ? 'Atualizar' : 'Criar'}
@@ -261,12 +300,15 @@ export function EtapaPage() {
               <div className="flex-1">
                 <h3 className="font-semibold">{etapa.ds_etapa}</h3>
                 <p className="text-sm text-gray-600 mt-1">
-                  Categoria: {getCategoriaName(etapa.cd_categoria_chamado)} | 
+                  Ordem: {etapa.ordem} | Categoria: {getCategoriaName(etapa.cd_categoria_chamado)} | 
                   Tipo Operador: {getTipoOperadorName(etapa.cd_tipo_operador)}
                 </p>
                 <div className="flex gap-2 mt-2">
                   <Badge variant={etapa.sn_ativo === 'S' ? 'default' : 'secondary'}>
                     {etapa.sn_ativo === 'S' ? 'Ativo' : 'Inativo'}
+                  </Badge>
+                  <Badge variant={etapa.sn_le_qrcode === 'S' ? 'default' : 'secondary'}>
+                    {etapa.sn_le_qrcode === 'S' ? 'Lê QRCode' : 'Não lê QRCode'}
                   </Badge>
                 </div>
               </div>

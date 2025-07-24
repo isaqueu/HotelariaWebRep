@@ -33,10 +33,11 @@ export function ItemLocalPage() {
     try {
       setIsLoading(true);
       const data = await itemLocalService.getAll();
-      setItensLocal(data);
+      setItensLocal(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erro ao carregar itens locais:', error);
       toast({ title: 'Erro ao carregar locais', variant: 'destructive' });
+      setItensLocal([]);
     } finally {
       setIsLoading(false);
     }
@@ -91,9 +92,9 @@ export function ItemLocalPage() {
   };
 
   // Filtered data
-  const filteredLocais = itensLocal.filter(local =>
+  const filteredLocais = Array.isArray(itensLocal) ? itensLocal.filter(local =>
     local.ds_item_local.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ) : [];
 
   if (isLoading) {
     return <div className="flex justify-center p-8">Carregando...</div>;

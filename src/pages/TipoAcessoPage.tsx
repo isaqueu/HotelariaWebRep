@@ -29,10 +29,11 @@ export function TipoAcessoPage() {
     try {
       setIsLoading(true);
       const data = await tipoAcessoService.getAll();
-      setTiposAcesso(data);
+      setTiposAcesso(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erro ao carregar tipos de acesso:', error);
       toast({ title: 'Erro ao carregar tipos de acesso', variant: 'destructive' });
+      setTiposAcesso([]);
     } finally {
       setIsLoading(false);
     }
@@ -87,9 +88,9 @@ export function TipoAcessoPage() {
   };
 
   // Filtered data
-  const filteredTipos = tiposAcesso.filter(tipo =>
+  const filteredTipos = Array.isArray(tiposAcesso) ? tiposAcesso.filter(tipo =>
     tipo.ds_tipo_acesso.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ) : [];
 
   if (isLoading) {
     return <div className="flex justify-center p-8">Carregando...</div>;

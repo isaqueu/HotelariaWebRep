@@ -29,10 +29,11 @@ export function TipoOperadorPage() {
     try {
       setIsLoading(true);
       const data = await tipoOperadorService.getAll();
-      setTiposOperador(data);
+      setTiposOperador(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erro ao carregar tipos de operador:', error);
       toast({ title: 'Erro ao carregar tipos de operador', variant: 'destructive' });
+      setTiposOperador([]);
     } finally {
       setIsLoading(false);
     }
@@ -87,9 +88,9 @@ export function TipoOperadorPage() {
   };
 
   // Filtered data
-  const filteredTipos = tiposOperador.filter(tipo =>
+  const filteredTipos = Array.isArray(tiposOperador) ? tiposOperador.filter(tipo =>
     tipo.ds_tipo_operador.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ) : [];
 
   if (isLoading) {
     return <div className="flex justify-center p-8">Carregando...</div>;
