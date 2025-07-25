@@ -36,7 +36,10 @@ export function TipoLimpezaPage() {
       setTiposLimpeza(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erro ao carregar tipos de limpeza:', error);
-      toast({ title: 'Erro ao carregar tipos de limpeza', variant: 'destructive' });
+      toast.error({
+        title: 'Erro',
+        description: 'Erro ao carregar tipos de limpeza',
+      });
       setTiposLimpeza([]);
     } finally {
       setIsLoading(false);
@@ -51,10 +54,16 @@ export function TipoLimpezaPage() {
     try {
       if (editingItem) {
         await tipoLimpezaService.update(editingItem.cd_tipo_limpeza, data);
-        toast({ title: 'Tipo de limpeza atualizado com sucesso!' });
+        toast.success({
+          title: 'Sucesso',
+          description: editingItem ? 'Tipo de limpeza atualizado com sucesso' : 'Tipo de limpeza criado com sucesso',
+        });
       } else {
         await tipoLimpezaService.create(data);
-        toast({ title: 'Tipo de limpeza criado com sucesso!' });
+        toast.success({
+          title: 'Sucesso',
+          description: editingItem ? 'Tipo de limpeza atualizado com sucesso' : 'Tipo de limpeza criado com sucesso',
+        });
       }
       setIsCreateModalOpen(false);
       setEditingItem(null);
@@ -62,7 +71,10 @@ export function TipoLimpezaPage() {
       loadTiposLimpeza();
     } catch (error) {
       console.error('Erro ao salvar tipo de limpeza:', error);
-      toast({ title: 'Erro ao salvar tipo de limpeza', variant: 'destructive' });
+      toast.error({
+        title: 'Erro',
+        description: 'Erro ao salvar tipo de limpeza',
+      });
     }
   };
 
@@ -76,11 +88,17 @@ export function TipoLimpezaPage() {
     if (confirm('Tem certeza que deseja excluir este tipo de limpeza?')) {
       try {
         await tipoLimpezaService.delete(id);
-        toast({ title: 'Tipo de limpeza excluído com sucesso!' });
+        toast.success({
+          title: 'Sucesso',
+          description: 'Tipo de limpeza excluído com sucesso',
+        });
         loadTiposLimpeza();
       } catch (error) {
         console.error('Erro ao excluir tipo de limpeza:', error);
-        toast({ title: 'Erro ao excluir tipo de limpeza', variant: 'destructive' });
+        toast.error({
+          title: 'Erro',
+          description: 'Erro ao excluir tipo de limpeza',
+        });
       }
     }
   };
