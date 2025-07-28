@@ -13,12 +13,12 @@ const api = axios.create({
 // Interceptor para adicionar token nas requisições
 api.interceptors.request.use(
   (config) => {
-    console.log('🔄 [API] Interceptando requisição...');
-    console.log('📝 [API] Detalhes da requisição:', {
-      method: config.method?.toUpperCase(),
-      url: config.url,
-      baseURL: config.baseURL
-    });
+    //console.log('🔄 [API] Interceptando requisição...');
+    // console.log('📝 [API] Detalhes da requisição:', {
+    //   method: config.method?.toUpperCase(),
+    //   url: config.url,
+    //   baseURL: config.baseURL
+    // });
 
     const token = getAuthToken();
     console.log('🔑 [API] Token encontrado:', token ? 'SIM' : 'NÃO');

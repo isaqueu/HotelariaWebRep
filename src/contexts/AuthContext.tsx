@@ -31,13 +31,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
       
       try {
         const savedToken = getAuthToken();
-        console.log('🔑 [AuthContext] Token salvo encontrado:', savedToken ? 'SIM' : 'NÃO');
         
         if (savedToken) {
-          console.log('✅ [AuthContext] Definindo token no estado...');
           setToken(savedToken);
 
-          console.log('👤 [AuthContext] Buscando perfil do usuário...');
           // Verifica se o token ainda é válido fazendo uma requisição para o perfil
           const profile = await authService.getProfile();
           console.log('📋 [AuthContext] Perfil obtido:', profile);
@@ -53,7 +50,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setToken(null);
         setUserProfile(null);
       } finally {
-        console.log('🏁 [AuthContext] Inicialização concluída');
         setLoading(false);
       }
     };
@@ -62,21 +58,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const loginContexto = async (username: string, password: string): Promise<boolean> => {
-    console.log('🔄 [AuthContext] Iniciando loginContexto...');
-    console.log('📝 [AuthContext] Dados recebidos:', {
-      username,
-      password: password ? '***' : 'vazio'
-    });
 
     try {
-      console.log('🚀 [AuthContext] Chamando authService.loginService...');
       const response = await authService.loginService({ USERNAME: username, EMAIL: '', PASSWORD: password });
-      
-      console.log('📨 [AuthContext] Resposta do authService:', {
-        access_token: response.access_token ? 'PRESENTE' : 'AUSENTE',
-        refresh_token: response.refresh_token ? 'PRESENTE' : 'AUSENTE',
-        user: response.user ? 'PRESENTE' : 'AUSENTE'
-      });
 
       if (response.access_token && response?.refresh_token) {
         console.log('💾 [AuthContext] Salvando tokens...');
@@ -84,7 +68,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         saveRefreshToken(response.refresh_token);
         setToken(response.access_token);
 
-        console.log('👤 [AuthContext] Buscando perfil do usuário após loginContexto...');
         // Busca o perfil do usuário após login
         const profile = await authService.getProfile();
         console.log('📋 [AuthContext] Perfil obtido após loginContexto:', profile);

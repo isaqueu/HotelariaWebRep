@@ -21,8 +21,6 @@ export function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    console.log('🔄 [LoginPage] Iniciando processo de login...');
-
     try {
       const success = await loginContexto(formData.username, formData.password);
 

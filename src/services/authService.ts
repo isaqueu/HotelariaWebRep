@@ -15,10 +15,9 @@ export const authService = {
     let requestBody: RequestBody = { message: 'Autenticação de usuário.', data: [credentials] };
 
     try {
-      console.log('🚀 [authService] Enviando requisição para /auth/login...');
       const response = await api.post('/auth/login', requestBody);
-      console.log('📨 [authService] Resposta recebida:');
-      console.log(response);
+      //console.log('📨 [authService] Resposta recebida:');
+      //console.log(response);
       
       
       // console.log('📨 [authService] Resposta recebida:', {
@@ -39,17 +38,16 @@ export const authService = {
   },
 
   async getProfile(): Promise<UserProfile> {
-    console.log('🔄 [authService] Buscando perfil do usuário...');
     
     try {
       console.log('🚀 [authService] Enviando requisição para /auth/profile...');
       const response = await api.post('/auth/profile');
       
-      console.log('📨 [authService] Perfil recebido:', {
-        status: response.status,
-        statusText: response.statusText,
-        data: response.data
-      });
+      // console.log('📨 [authService] Perfil recebido:', {
+      //   status: response.status,
+      //   statusText: response.statusText,
+      //   data: response.data
+      // });
       
       return response.data;
     } catch (error) {
@@ -59,12 +57,9 @@ export const authService = {
   },
 
   async logout(): Promise<void> {
-    console.log('🔄 [authService] Fazendo logout...');
     
     try {
-      console.log('🚀 [authService] Enviando requisição para /auth/logout...');
       await api.post('/auth/logout');
-      console.log('✅ [authService] Logout realizado com sucesso');
     } catch (error) {
       console.error('💥 [authService] Erro no logout:', error);
       throw error;
