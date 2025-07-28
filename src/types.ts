@@ -81,11 +81,13 @@ export interface TipoLimpeza {
 export interface TipoOperador {
   cd_tipo_operador: number;
   ds_tipo_operador: string;
+  sn_ativo: string;
 }
 
 export interface TipoAcesso {
   cd_tipo_acesso: number;
   ds_tipo_acesso: string;
+  sn_ativo: string;
 }
 
 export interface StatusErroQrcode {

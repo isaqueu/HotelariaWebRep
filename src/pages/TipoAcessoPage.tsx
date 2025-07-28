@@ -3,6 +3,7 @@ import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { MaterialCard } from '../components/ui/material-card';
 import { MaterialButton } from '../components/ui/material-button';
 import { FloatingLabelInput } from '../components/ui/floating-label-input';
+import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
