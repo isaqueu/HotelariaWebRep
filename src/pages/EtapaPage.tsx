@@ -293,14 +293,12 @@ export function EtapaPage() {
 
       {/* Search */}
       <MaterialCard className="p-6 bg-gradient-to-r from-blue-50 to-blue-100/50 border-2 border-blue-200 shadow-sm">
-        <div className="border border-blue-200/60 rounded-lg p-4 bg-white/50">
           <FloatingLabelInput
             label="Buscar etapa..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             icon={<Search className="h-5 w-5" />}
           />
-        </div>
       </MaterialCard>
 
       {/* Data Table */}
