@@ -207,7 +207,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   const toggleGroup = (groupName: string) => {
     setExpandedGroups((prev) => {
-      const newSet = new Set();
+      const newSet = new Set<string>();
       // Se o grupo já está expandido, fecha tudo (comportamento accordion)
       if (!prev.has(groupName)) {
         // Se não estava expandido, abre apenas este grupo
