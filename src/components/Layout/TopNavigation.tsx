@@ -40,7 +40,7 @@ export function TopNavigation({ onMenuToggle }: TopNavigationProps) {
         <div className="flex items-center space-x-2">
           <User className="h-5 w-5 text-white" />
           <span className="text-sm text-white hidden sm:inline">
-            {userProfile?.nome || userProfile?.username || 'Usuário'}
+            {userProfile?.username || userProfile?.username || 'Usuário'}
           </span>
         </div>
         
