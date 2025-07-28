@@ -21,7 +21,7 @@ export function TopNavigation({ onMenuToggle }: TopNavigationProps) {
     <header className="bg-gradient-to-b from-blue-600 to-blue-500 border-b border-blue-700 px-4 py-3 flex items-center justify-between shadow-lg">
       <div className="flex items-center space-x-4">
         <MaterialButton
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={onMenuToggle}
           className="md:hidden text-white hover:bg-blue-700"
@@ -45,7 +45,7 @@ export function TopNavigation({ onMenuToggle }: TopNavigationProps) {
         </div>
         
         <MaterialButton
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={handleLogout}
           className="text-white hover:text-red-300 hover:bg-blue-700"
