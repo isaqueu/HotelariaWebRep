@@ -58,10 +58,44 @@ function AppRoutes() {
 
 function App() {
   return (
+    {/* 
+      TooltipProvider: Fornece o contexto global para todos os tooltips da aplicação.
+      É necessário para que os componentes Tooltip do Radix UI funcionem corretamente.
+      Deve envolver toda a aplicação para permitir que qualquer componente filho
+      possa usar tooltips sem precisar configurar seu próprio provider.
+    */}
     <TooltipProvider>
+      {/* 
+        Router (BrowserRouter): Habilita o roteamento SPA (Single Page Application) 
+        usando o HTML5 History API. Permite navegação entre páginas sem recarregar
+        a página inteira. É fundamental para uma experiência de usuário fluida
+        e mantém o estado da aplicação durante a navegação.
+      */}
       <Router>
+        {/* 
+          AuthProvider: Context provider customizado que gerencia todo o estado
+          de autenticação da aplicação. Fornece informações sobre:
+          - Status de login/logout do usuário
+          - Dados do perfil do usuário logado
+          - Funções para login e logout
+          - Estado de carregamento das operações de auth
+          Centraliza a lógica de autenticação e torna disponível para toda a app.
+        */}
         <AuthProvider>
+          {/* 
+            AppRoutes: Componente que define todas as rotas da aplicação.
+            Contém a lógica de roteamento, proteção de rotas (ProtectedRoute),
+            redirecionamentos baseados no status de autenticação, e mapeamento
+            de URLs para componentes de página específicos.
+          */}
           <AppRoutes />
+          {/* 
+            Toaster: Sistema de notificações toast global da aplicação.
+            Renderiza todas as notificações (sucesso, erro, aviso) que são
+            disparadas através do hook useToast. Posicionado aqui para estar
+            disponível em qualquer parte da aplicação e renderizar as
+            notificações por cima de todos os outros componentes.
+          */}
           <Toaster />
         </AuthProvider>
       </Router>
