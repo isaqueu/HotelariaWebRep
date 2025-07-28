@@ -267,7 +267,7 @@ export function StatusErroQrcodePage() {
                       {status.ds_status_erro_qrcode}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-blue-200/20">
-                      {categoria?.ds_categoria_chamado || 'N/A'}
+                      {categorias.find(cat => cat.cd_categoria_chamado === status.cd_categoria_chamado)?.ds_categoria_chamado || 'N/A'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap border-r border-blue-200/20">
                       <Badge variant={status.sn_ativo === 'S' ? 'default' : 'secondary'}>
