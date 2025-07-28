@@ -61,8 +61,8 @@ function App() {
     <TooltipProvider>
       <Router>
         <AuthProvider>
-          <Toaster />
           <AppRoutes />
+          <Toaster />
         </AuthProvider>
       </Router>
     </TooltipProvider>

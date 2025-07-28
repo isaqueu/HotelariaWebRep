@@ -169,15 +169,15 @@ function toast({ ...props }: Toast) {
 }
 
 // Funções utilitárias para tipos específicos de toast
-toast.error = (props: Omit<Toast, 'variant'>) => {
+function toastError(props: Omit<Toast, 'variant'>) {
   return toast({ ...props, variant: 'error' })
 }
 
-toast.warning = (props: Omit<Toast, 'variant'>) => {
+function toastWarning(props: Omit<Toast, 'variant'>) {
   return toast({ ...props, variant: 'warning' })
 }
 
-toast.success = (props: Omit<Toast, 'variant'>) => {
+function toastSuccess(props: Omit<Toast, 'variant'>) {
   return toast({ ...props, variant: 'success' })
 }
 
@@ -196,12 +196,11 @@ function useToast() {
 
   return {
     ...state,
-    toast: {
-      ...toast,
-      error: toast.error,
-      warning: toast.warning,
-      success: toast.success,
-    },
+    toast: Object.assign(toast, {
+      error: toastError,
+      warning: toastWarning,
+      success: toastSuccess,
+    }),
     dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
   }
 }

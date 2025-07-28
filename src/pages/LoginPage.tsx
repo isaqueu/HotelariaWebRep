@@ -28,24 +28,22 @@ export function LoginPage() {
 
       if (success) {
         console.log('🎉 [LoginPage] Login bem-sucedido! Redirecionando para dashboard...');
-        toast({
+        toast.success({
           title: 'Login realizado com sucesso',
           description: 'Bem-vindo ao HOTELARIA WEB',
         });
         navigate('/');
       } else {
-        toast({
+        toast.error({
           title: 'Erro no login',
           description: 'Usuário ou senha inválidos',
-          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('💥 [LoginPage] Erro capturado durante login:', error);
-      toast({
+      toast.error({
         title: 'Erro no login',
         description: 'Erro interno do servidor',
-        variant: 'destructive',
       });
     } finally {
       console.log('🏁 [LoginPage] Finalizando processo de login...');
