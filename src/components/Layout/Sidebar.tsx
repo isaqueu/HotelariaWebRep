@@ -39,8 +39,8 @@ const menuStructure: MenuGroup[] = [
     items: [],
   },
   {
-    name: "Configurações",
-    icon: () => <EmojiIcon emoji="⚙️" />,
+    name: "Cadastro",
+    icon: () => <EmojiIcon emoji="📝" />, // Bloco de notas
     color: "bg-emerald-500",
     items: [
       {
