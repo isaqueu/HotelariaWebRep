@@ -24,7 +24,7 @@ export function TopNavigation({ onMenuToggle }: TopNavigationProps) {
           variant="outline"
           size="sm"
           onClick={onMenuToggle}
-          className="md:hidden text-white hover:bg-blue-700"
+          className="md:hidden text-white border-white/20 bg-white/10 hover:bg-white/20 hover:text-white"
         >
           <Menu className="h-5 w-5" />
         </MaterialButton>
@@ -48,7 +48,7 @@ export function TopNavigation({ onMenuToggle }: TopNavigationProps) {
           variant="outline"
           size="sm"
           onClick={handleLogout}
-          className="text-white hover:text-red-300 hover:bg-blue-700"
+          className="text-white border-white/20 bg-white/10 hover:bg-red-500/20 hover:text-red-200 hover:border-red-300/30"
         >
           <LogOut className="h-4 w-4" />
         </MaterialButton>
