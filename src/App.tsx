@@ -16,6 +16,7 @@ import { TipoAcessoPage } from "./pages/TipoAcessoPage";
 import { StatusErroQrcodePage } from "./pages/StatusErroQrcodePage";
 import { OperadorPage } from "./pages/OperadorPage";
 import NotFound from "@/pages/not-found";
+import { TokenExpirationHandler } from "./components/TokenExpirationHandler";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   // Componente que protege rotas privadas verificando se o usuário está autenticado.
@@ -81,6 +82,7 @@ function App() {
             Context provider que gerencia o estado de autenticação da aplicação.
             Centraliza informações de login, dados do usuário e operações de auth.
           */}
+          <TokenExpirationHandler />
           <AppRoutes />
           {/* 
             Componente que define todas as rotas e proteções da aplicação.

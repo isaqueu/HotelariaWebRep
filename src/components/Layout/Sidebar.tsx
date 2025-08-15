@@ -98,7 +98,7 @@ const menuStructure: MenuGroup[] = [
             color: "bg-purple-400",
           },
           {
-            name: "Tipos de Operador",
+            name: "Tipo Operador",
             path: "/tipo-operador",
             icon: () => <EmojiIcon emoji="👔" />,
             color: "bg-purple-400",

@@ -1,7 +1,7 @@
 
 import api from './api';
 import type { LoginRequest, LoginResponse, RequestBody, UserProfile } from '../types';
-import { encryptKey } from '@/lib/utils';
+import { encryptKey, getRefreshToken } from '@/lib/utils';
 
 
 
@@ -16,20 +16,7 @@ export const authService = {
 
     try {
       const response = await api.post('/auth/login', requestBody);
-      //console.log('📨 [authService] Resposta recebida:');
-      //console.log(response);
-      
-      
-      // console.log('📨 [authService] Resposta recebida:', {
-      //   status: response.status,
-      //   statusText: response.statusText,
-      //   data: {
-      //     access_token: response.data.access_token ? 'PRESENTE' : 'AUSENTE',
-      //     refresh_token: response.data.refresh_token ? 'PRESENTE' : 'AUSENTE',
-      //     user: response.data.user ? 'PRESENTE' : 'AUSENTE'
-      //   }
-      // });
-      
+     
       return response.data;
     } catch (error) {
       console.error('💥 [authService] Erro na requisição de login:', error);
@@ -38,10 +25,16 @@ export const authService = {
   },
 
   async getProfile(): Promise<UserProfile> {
+
+    // Passado nome da aplicação para retornar somente as permissões da aplicação ou permissões que
+    // não estão associadas as nenhuma aplicação mas tem no usuário
+    const headers = {
+      'x-empresa': 'HOTELARIAAPP'
+    };
     
     try {
       console.log('🚀 [authService] Enviando requisição para /auth/profile...');
-      const response = await api.post('/auth/profile');
+      const response = await api.post('/auth/profile', {}, { headers });
       
       // console.log('📨 [authService] Perfil recebido:', {
       //   status: response.status,
@@ -66,22 +59,15 @@ export const authService = {
     }
   },
 
-  async refreshToken(): Promise<LoginResponse> {
+  async renovaTokenService(): Promise<LoginResponse> {
     console.log('🔄 [authService] Renovando token...');
-    
+    const refreshToken = getRefreshToken();
+
     try {
-      console.log('🚀 [authService] Enviando requisição para /auth/refresh...');
-      const response = await api.post('/auth/refresh');
-      
-      console.log('📨 [authService] Token renovado:', {
-        status: response.status,
-        statusText: response.statusText,
-        data: {
-          access_token: response.data.access_token ? 'PRESENTE' : 'AUSENTE',
-          refresh_token: response.data.refresh_token ? 'PRESENTE' : 'AUSENTE'
-        }
-      });
-      
+      // Estrutura o objeto de acordo com o schema esperado pelo SCMM-CORE
+      const requestBody = { token: refreshToken };
+      const response = await api.post('/auth/refresh-token', requestBody);
+           
       return response.data;
     } catch (error) {
       console.error('💥 [authService] Erro ao renovar token:', error);

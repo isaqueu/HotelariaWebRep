@@ -25,7 +25,6 @@ export function LoginPage() {
       const success = await loginContexto(formData.username, formData.password);
 
       if (success) {
-        console.log('🎉 [LoginPage] Login bem-sucedido! Redirecionando para dashboard...');
         toast.success({
           title: 'Login realizado com sucesso',
           description: 'Bem-vindo ao HOTELARIA WEB',

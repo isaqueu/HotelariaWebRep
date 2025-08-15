@@ -1,13 +1,15 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { authService } from '../services/authService';
-import { getAuthToken, saveAuthToken, removeAuthToken, saveRefreshToken, removeRefreshToken } from '../lib/utils';
+import { getAuthToken, saveAuthToken, removeAuthToken, saveRefreshToken, removeRefreshToken, saveExpiresAt, removeExpiresAt } from '../lib/utils';
 import type { UserProfile } from '../types';
 
 interface AuthContextType {
   isAuthenticated: boolean;
+  token: string | null;
   userProfile: UserProfile | null;
   loginContexto: (username: string, password: string) => Promise<boolean>;
+  renovaToken: () => Promise<boolean>;
   logout: () => void;
   loading: boolean;
 }
@@ -65,6 +67,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (response.access_token && response?.refresh_token) {
         console.log('💾 [AuthContext] Salvando tokens...');
         saveAuthToken(response.access_token);
+        saveExpiresAt(response.access_token);
         saveRefreshToken(response.refresh_token);
         setToken(response.access_token);
 
@@ -92,10 +95,42 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+ const renovaToken = async (): Promise<boolean> => {
+
+    try {
+      const response = await authService.renovaTokenService();
+
+      if (response.access_token && response?.refresh_token) {
+        console.log('💾 [AuthContext] Renovando tokens...');
+        saveAuthToken(response.access_token);
+        saveExpiresAt(response.access_token);
+        saveRefreshToken(response.refresh_token);
+        setToken(response.access_token);
+        
+        console.log('✅ [AuthContext] token renovado com sucesso!');
+        return true;
+      }
+      
+      console.log('❌ [AuthContext] Renovar Token falhou - tokens ausentes na resposta');
+      return false;
+    } catch (error) {
+      console.error('💥 [AuthContext] Erro no renovaToken:', error);
+      
+      // Log detalhado do erro
+      if (error instanceof Error) {
+        console.error('📝 [AuthContext] Mensagem do erro:', error.message);
+        console.error('📚 [AuthContext] Stack trace:', error.stack);
+      }
+      
+      return false;
+    }
+  };
+
   const logout = () => {
     console.log('🔄 [AuthContext] Iniciando logout...');
     console.log('🧹 [AuthContext] Removendo tokens de autenticação...');
     removeAuthToken();
+    removeExpiresAt();
     removeRefreshToken();
     console.log('🔄 [AuthContext] Limpando estado do usuário...');
     setToken(null);
@@ -107,8 +142,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const value = {
     isAuthenticated: !!token,
+    token,
     userProfile,
     loginContexto,
+    renovaToken,
     logout,
     loading,
   };
