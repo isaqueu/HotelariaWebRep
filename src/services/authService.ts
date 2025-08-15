@@ -74,4 +74,18 @@ export const authService = {
       throw error;
     }
   },
+
+  async passwordRecovery(email: string) {
+    const requestBody = {
+      EMAIL: email,
+    };
+
+    try {
+      const response = await api.post('/password-recovery/request', requestBody);
+      return response;
+    } catch (error: any) {
+      console.error('[authService] Erro ao solicitar recuperação de senha:', error);
+      throw error;
+    }
+  },
 };

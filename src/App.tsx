@@ -17,6 +17,7 @@ import { StatusErroQrcodePage } from "./pages/StatusErroQrcodePage";
 import { OperadorPage } from "./pages/OperadorPage";
 import NotFound from "@/pages/not-found";
 import { TokenExpirationHandler } from "./components/TokenExpirationHandler";
+import { ResetSenhaPage } from "./pages/ResetSenhaPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   // Componente que protege rotas privadas verificando se o usuário está autenticado.
@@ -48,6 +49,7 @@ function AppRoutes() {
             <LoginPage />
         } 
       />
+      <Route path="/reset-senha" element={<ResetSenhaPage />} />
       <Route path="/" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
       <Route path="/categoria-chamado" element={<ProtectedRoute><CategoriaChamadoPage /></ProtectedRoute>} />
       <Route path="/dispositivo" element={<ProtectedRoute><DispositivoPage /></ProtectedRoute>} />

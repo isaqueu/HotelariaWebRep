@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Hospital, User, Lock } from 'lucide-react';
 import { FloatingLabelInput } from '../components/ui/floating-label-input';
 import { MaterialButton } from '../components/ui/material-button';
@@ -97,12 +97,12 @@ export function LoginPage() {
           </MaterialButton>
 
           <div className="text-center">
-            <a
-              href="#"
+            <Link
+              to="/reset-senha"
               className="text-primary text-sm hover:text-primary/80 transition-colors duration-200"
             >
               Esqueceu sua senha?
-            </a>
+            </Link>
           </div>
         </form>
       </MaterialCard>
