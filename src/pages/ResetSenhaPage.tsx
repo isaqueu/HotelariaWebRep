@@ -13,11 +13,24 @@ export function ResetSenhaPage() {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
+  const [showEmailError, setShowEmailError] = useState(false);
 
   // Função para validar email
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    
+    // Mostra erro apenas se há texto e não é um email válido
+    if (newEmail.length > 0 && !isValidEmail(newEmail)) {
+      setShowEmailError(true);
+    } else {
+      setShowEmailError(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -87,14 +100,22 @@ export function ResetSenhaPage() {
 
         {/* Reset Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          <FloatingLabelInput
-            label="Digite seu email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            icon={<Mail className="h-5 w-5" />}
-            required
-          />
+          <div>
+            <FloatingLabelInput
+              label="Digite seu email"
+              type="email"
+              value={email}
+              onChange={handleEmailChange}
+              icon={<Mail className="h-5 w-5" />}
+              className={showEmailError ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : ''}
+              required
+            />
+            {showEmailError && (
+              <p className="text-red-500 text-sm mt-1 ml-1">
+                Por favor, digite um email válido
+              </p>
+            )}
+          </div>
 
           <MaterialButton
             type="submit"
